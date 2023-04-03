@@ -6,6 +6,7 @@ import productRouter from "./routes/productRoutes.js";
 import data from "./data.js";
 import userRouter from "./routes/userRoutes.js";
 import orderRouter from './routes/orderRoutes.js'
+import uploadRouter from "./routes/uploadRoutes.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/seed", seedRouter);
 app.use("/api/products", productRouter);
+app.use('/api/upload', uploadRouter);
 app.use("/api/users", userRouter);
 app.use('/api/orders', orderRouter);
 app.get('/api/keys/paypal', (req, res) => {
