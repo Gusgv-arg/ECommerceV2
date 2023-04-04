@@ -148,7 +148,7 @@ export default function SearchScreen() {
 			</Helmet>
 			<Row>
 				<Col md={3}>
-					<h3>Department</h3>
+					<h5>Department</h5>
 					<div>
 						<ul>
 							<li>
@@ -172,7 +172,7 @@ export default function SearchScreen() {
 						</ul>
 					</div>
 					<div>
-						<h3>Price</h3>
+						<h5>Price</h5>
 						<ul>
 							<li>
 								<Link
@@ -195,7 +195,7 @@ export default function SearchScreen() {
 						</ul>
 					</div>
 					<div>
-						<h3>Avg. Customer Review</h3>
+						<h5>Avg. Customer Review</h5>
 						<ul>
 							{ratings.map((r) => (
 								<li key={r.name}>
@@ -277,7 +277,7 @@ export default function SearchScreen() {
 								{[...Array(pages).keys()].map((x) => (
 									<LinkContainer
 										key={x + 1}
-										className="mx-1"
+										className="mx-1 bg-light"
 										/* to={getFilterUrl({ page: x + 1 })} reactV17 */
 										to={{
 											pathname: "/search",

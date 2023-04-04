@@ -16,7 +16,7 @@ main {
 }
 .btn-primary,
 .btn-outline-primary {
-  background-color: #f0c040;
+  background-color: #f0c040;  
   color: #000000;
 }
 .products {
@@ -84,4 +84,13 @@ main {
 
 button.thumbnail {
   padding: 0;
+}
+ul li :any-link{
+  text-decoration: none;
+ 
+}
+/*In cards*/
+.no-link{
+  text-decoration: none;
+  color: rgb(17, 9, 99)
 }

@@ -9,6 +9,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function CartScreen() {
 	const navigate = useNavigate();
@@ -20,14 +21,16 @@ export default function CartScreen() {
 
 	const updateCartHandler = async (item, quantity) => {
 		const { data } = await axios.get(`/api/products/${item._id}`);
-		if (data.stock < quantity) {
-			window.alert("Sorry. Product is out of stock");
+		if (data.stock < quantity || data.stock === quantity) {
+			/* window.alert("Sorry. Product is out of stock"); */
+			toast.error("Sorry. We have no more stock of this Product.")
 			return;
 		}
 		ctxDispatch({
 			type: "CART_ADD_ITEM",
 			payload: { ...item, quantity },
 		});
+		toast.success("Product updated successfully");
 	};
 	const removeItemHandler = (item) => {
 		ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
@@ -78,7 +81,7 @@ export default function CartScreen() {
 													updateCartHandler(item, item.quantity + 1)
 												}
 												variant="light"
-												disabled={item.quantity === item.stock}
+												/* disabled={item.quantity === item.stock} */
 											>
 												<i className="fas fa-plus-circle"></i>
 											</Button>

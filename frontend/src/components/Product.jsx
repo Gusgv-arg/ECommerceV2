@@ -5,6 +5,7 @@ import Rating from "./Rating";
 import axios from "axios";
 import { useContext } from "react";
 import { Store } from "../Store";
+import { toast } from "react-toastify";
 
 function Product(props) {
 	const { product } = props;
@@ -19,13 +20,14 @@ function Product(props) {
 		const quantity = existItem ? existItem.quantity + 1 : 1;
 		const { data } = await axios.get(`/api/products/${item._id}`);
 		if (data.stock < quantity) {
-			window.alert("Sorry. Product is out of stock");
+			toast.error("Sorry, we have no more stock of this Product")
 			return;
 		}
 		ctxDispatch({
 			type: "CART_ADD_ITEM",
 			payload: { ...item, quantity },
 		});
+		toast.success("Product added successfully!")
 	};
 
 	return (
@@ -34,7 +36,7 @@ function Product(props) {
 				<img src={product.image} className="card-img-top" alt={product.name} />
 			</Link>
 			<Card.Body>
-				<Link to={`/product/${product.slug}`}>
+				<Link to={`/product/${product.slug}`} className="no-link">
 					<Card.Title>{product.name}</Card.Title>
 				</Link>
 				<Rating rating={product.rating} numReviews={product.numReviews} />

@@ -43,6 +43,7 @@ function App() {
 		localStorage.removeItem("userInfo");
 		localStorage.removeItem("shippingAddress");
 		localStorage.removeItem("paymentMethod");
+		localStorage.removeItem("cartItems");
 		window.location.href = "/signin";
 	};
 
@@ -58,8 +59,10 @@ function App() {
 				toast.error(getError(err));
 			}
 		};
-		fetchCategories();
-	}, []);
+		if (sidebarIsOpen) {
+			fetchCategories();
+		}
+	}, [sidebarIsOpen]);
 
 	return (
 		<BrowserRouter>
@@ -85,11 +88,13 @@ function App() {
 							</LinkContainer>
 
 							<Navbar.Toggle aria-controls="basic-navbar-nav" />
+
 							<Navbar.Collapse id="basic-navbar-nav">
-								<SearchBox />
+								<SearchBox className="ms-5" ></SearchBox>
+
 								<Nav className="me-auto w-100 justify-content-end">
 									<Link to="/cart" className="nav-link">
-										<i className="fa fa-shopping-cart" />
+										<i className="fa fa-shopping-cart" />{" "}
 										{cart.cartItems.length > 0 && (
 											<Badge pill bg="danger">
 												{cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
@@ -154,7 +159,7 @@ function App() {
 							<Nav.Item key={category}>
 								<LinkContainer
 									/* to={`/search?category=${category}`} React V17 */
-									to={{ pathname: '/search', search: `category=${category}` }}
+									to={{ pathname: "/search", search: `category=${category}` }}
 									onClick={() => setSidebarIsOpen(false)}
 								>
 									<Nav.Link>{category}</Nav.Link>
