@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import seedRouter from "./routes/seedRoutes.js";
 import productRouter from "./routes/productRoutes.js";
-import data from "./data.js";
+//import data from "./data.js";
 import userRouter from "./routes/userRoutes.js";
 import orderRouter from './routes/orderRoutes.js'
 import uploadRouter from "./routes/uploadRoutes.js";
+//import path from 'path';
 
 dotenv.config();
 
@@ -33,6 +34,12 @@ app.get('/api/keys/paypal', (req, res) => {
 	res.send(process.env.PAYPAL_CLIENT_ID || 'sb');
   });
   
+//For deploy
+/* app.use(express.static(path.join(__dirname, '/frontend/build')));
+
+app.get('*', (req, res) =>
+res.sendFile(path.join(__dirname, '/frontend/build/index.html'))) */
+
 //Catches errors due to express-async-handler
 app.use((err, req, res, next) => {
 	res.status(500).send({ message: err.message });

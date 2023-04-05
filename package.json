@@ -1,0 +1,21 @@
+{
+  "name": "ecommercev2",
+  "version": "1.0.0",
+  "description": "E-CommerceV2: this proyect it's a crucial part of my studies to be able to approach my Final Proyect at Henry's bootcamp.",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "start": "node backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gusgv-arg/ECommerceV2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gusgv-arg/ECommerceV2/issues"
+  },
+  "homepage": "https://github.com/Gusgv-arg/ECommerceV2#readme"
+}
