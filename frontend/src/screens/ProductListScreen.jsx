@@ -9,6 +9,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
+import Swal from "sweetalert2";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -95,43 +96,56 @@ export default function ProductListScreen() {
 	}, [page, userInfo, successDelete]);
 
 	const createHandler = async () => {
-		if (window.confirm("Are you sure to create?")) {
-			try {
-				dispatch({ type: "CREATE_REQUEST" });
-				const { data } = await axios.post(
-					"/api/products",
-					{},
-					{
-						headers: { Authorization: `Bearer ${userInfo.token}` },
-					}
-				);
-				toast.success("Product created successfully");
-				dispatch({ type: "CREATE_SUCCESS" });
-				navigate(`/admin/product/${data.product._id}`);
-			} catch (err) {
-				toast.error(getError(error));
-				dispatch({
-					type: "CREATE_FAIL",
-				});
-			}
+		try {
+			dispatch({ type: "CREATE_REQUEST" });
+			const { data } = await axios.post(
+				"/api/products",
+				{},
+				{
+					headers: { Authorization: `Bearer ${userInfo.token}` },
+				}
+			);
+			toast.success("Product created successfully");
+			dispatch({ type: "CREATE_SUCCESS" });
+			navigate(`/admin/product/${data.product._id}`);
+		} catch (err) {
+			toast.error(getError(error));
+			dispatch({
+				type: "CREATE_FAIL",
+			});
 		}
 	};
 
-	const deleteHandler = async (product) => {
-		if (window.confirm("Are you sure to delete?")) {
-			try {
-				await axios.delete(`/api/products/${product._id}`, {
-					headers: { Authorization: `Bearer ${userInfo.token}` },
-				});
-				toast.success("product deleted successfully");
-				dispatch({ type: "DELETE_SUCCESS" });
-			} catch (err) {
-				toast.error(getError(error));
-				dispatch({
-					type: "DELETE_FAIL",
-				});
-			}
+	const deleteConfirmHandler = async (product) => {
+		try {
+			await axios.delete(`/api/products/${product._id}`, {
+				headers: { Authorization: `Bearer ${userInfo.token}` },
+			});
+			toast.success("product deleted successfully");
+			dispatch({ type: "DELETE_SUCCESS" });
+		} catch (err) {
+			toast.error(getError(error));
+			dispatch({
+				type: "DELETE_FAIL",
+			});
 		}
+	};
+
+	const deleteHandler = (product) => {
+		Swal.fire({
+			title: "Atention",
+			text: "Are you sure to delete this product?",
+			icon: "warning",
+			showDenyButton: true,
+			denyButtonText: "Cancel",
+			confirmButtonText: "Confirm",
+		}).then((response) => {
+			if (response.isConfirmed) {
+				deleteConfirmHandler(product);
+			} else {
+				return;
+			}
+		});
 	};
 
 	return (

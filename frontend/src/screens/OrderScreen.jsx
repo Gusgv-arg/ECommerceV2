@@ -14,6 +14,7 @@ import { getError } from "../utils";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
+import Swal from "sweetalert2";
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -169,7 +170,7 @@ export default function OrderScreen() {
 		successDeliver,
 	]);
 
-	async function deliverOrderHandler() {
+	async function deliverOrderConfirmHandler() {
 		try {
 			dispatch({ type: "DELIVER_REQUEST" });
 			const { data } = await axios.put(
@@ -186,6 +187,23 @@ export default function OrderScreen() {
 			dispatch({ type: "DELIVER_FAIL" });
 		}
 	}
+
+	const deliverOrderHandler = () => {
+		Swal.fire({
+			title: "Atention",
+			text: "Are you sure you want to deliver this order?",
+			icon: "warning",
+			showDenyButton: true,
+			denyButtonText: "Cancel",
+			confirmButtonText: "Confirm",
+		}).then(response=>{
+			if (response.isConfirmed){
+				deliverOrderConfirmHandler()
+			} else {
+				return
+			}
+		});
+	};
 
 	return loading ? (
 		<LoadingBox></LoadingBox>

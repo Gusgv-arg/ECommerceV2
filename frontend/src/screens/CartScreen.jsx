@@ -10,6 +10,7 @@ import Card from "react-bootstrap/Card";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 export default function CartScreen() {
 	const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function CartScreen() {
 		const { data } = await axios.get(`/api/products/${item._id}`);
 		if (data.stock < quantity || data.stock === quantity) {
 			/* window.alert("Sorry. Product is out of stock"); */
-			toast.error("Sorry. We have no more stock of this Product.")
+			toast.error("Sorry. We have no more stock of this Product.");
 			return;
 		}
 		ctxDispatch({
@@ -32,8 +33,26 @@ export default function CartScreen() {
 		});
 		toast.success("Product updated successfully");
 	};
-	const removeItemHandler = (item) => {
+
+	/* const removeItemHandler = (item) => {
 		ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
+	}; */
+	const removeItemHandler = (item) => {
+		Swal.fire({
+			title: "Atention",
+			text: "Are you sure you want to remove this item?",
+			icon: "warning",
+			showDenyButton: true,
+			denyButtonText: "Cancel",
+			confirmButtonText: "Confirm",
+		}).then((response) => {
+			if (response.isConfirmed) {
+				ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
+				toast.success("Item removed successfully")
+			} else {
+				return;
+			}
+		});
 	};
 
 	const checkoutHandler = () => {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet-async";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import MessageBox from "../components/MessageBox";
 import { Store } from "../Store";
 import { getError } from "../utils";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -79,23 +80,42 @@ export default function OrderListScreen() {
 		}
 	}, [userInfo, successDelete, page]);
 
-	const deleteHandler = async (order) => {
-		if (window.confirm("Are you sure to delete?")) {
-			try {
-				dispatch({ type: "DELETE_REQUEST" });
-				await axios.delete(`/api/orders/${order._id}`, {
-					headers: { Authorization: `Bearer ${userInfo.token}` },
-				});
-				toast.success("order deleted successfully");
-				dispatch({ type: "DELETE_SUCCESS" });
-			} catch (err) {
-				toast.error(getError(error));
-				dispatch({
-					type: "DELETE_FAIL",
-				});
-			}
+	
+	const deleteConfirm = async (order) => {
+		try {
+			dispatch({ type: "DELETE_REQUEST" });
+			await axios.delete(`/api/orders/${order._id}`, {
+				headers: { Authorization: `Bearer ${userInfo.token}` },
+			});
+			toast.success("Order deleted successfully");
+
+			dispatch({ type: "DELETE_SUCCESS" });
+		} catch (err) {
+			toast.error(getError(error));
+			dispatch({
+				type: "DELETE_FAIL",
+			});
 		}
 	};
+
+	const deleteHandler=(order)=>{
+		Swal.fire({
+			title: "Atention",
+			text: "Are you sure you want to delete this order?",
+			icon: "warning",
+			showDenyButton: true,
+			denyButtonText: "Cancel",
+			confirmButtonText: "Confirm" 
+
+		}).then(response=>{
+			if (response.isConfirmed){
+				deleteConfirm(order)
+			} else{
+				return
+			}
+		})
+	}
+
 
 	return (
 		<div>
@@ -145,11 +165,11 @@ export default function OrderListScreen() {
 										>
 											Details
 										</Button>
-										&nbsp;
+										&nbsp;										
 										<Button
 											type="button"
 											variant="light"
-											onClick={() => deleteHandler(order)}
+											onClick={() => deleteHandler(order)}											
 										>
 											<i className="fas fa-trash"></i>
 										</Button>
@@ -158,6 +178,7 @@ export default function OrderListScreen() {
 							))}
 						</tbody>
 					</table>
+
 					<div>
 						{[...Array(pages).keys()].map((x) => (
 							<Link

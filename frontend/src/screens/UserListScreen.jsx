@@ -8,6 +8,7 @@ import { getError } from "../utils";
 import Button from "react-bootstrap/Button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -80,22 +81,37 @@ export default function UserListScreen() {
 		}
 	}, [userInfo, successDelete, page]);
 
-	const deleteHandler = async (user) => {
-		if (window.confirm("Are you sure to delete?")) {
-			try {
-				dispatch({ type: "DELETE_REQUEST" });
-				await axios.delete(`/api/users/${user._id}`, {
-					headers: { Authorization: `Bearer ${userInfo.token}` },
-				});
-				toast.success("user deleted successfully");
-				dispatch({ type: "DELETE_SUCCESS" });
-			} catch (error) {
-				toast.error(getError(error));
-				dispatch({
-					type: "DELETE_FAIL",
-				});
-			}
+	const deleteConfirmHandler = async (user) => {
+		try {
+			dispatch({ type: "DELETE_REQUEST" });
+			await axios.delete(`/api/users/${user._id}`, {
+				headers: { Authorization: `Bearer ${userInfo.token}` },
+			});
+			toast.success("user deleted successfully");
+			dispatch({ type: "DELETE_SUCCESS" });
+		} catch (error) {
+			toast.error(getError(error));
+			dispatch({
+				type: "DELETE_FAIL",
+			});
 		}
+	};
+
+	const deleteHandler = (user) => {
+		Swal.fire({
+			title: "Atention",
+			text: "Are you sure you want to delete this user?",
+			icon: "warning",
+			showDenyButton: true,
+			denyButtonText: "Cancel",
+			confirmButtonText: "Confirm",
+		}).then((response) => {
+			if (response.isConfirmed) {
+				deleteConfirmHandler(user);
+			} else {
+				return;
+			}
+		});
 	};
 
 	return (

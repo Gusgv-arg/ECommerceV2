@@ -115,7 +115,10 @@ export default function ProductEditScreen() {
 			dispatch({
 				type: "UPDATE_SUCCESS",
 			});
-			toast.success("Product updated successfully");
+			toast.success("Product updated successfully", {
+				icon: '😀',
+			})
+
 			navigate("/admin/products");
 		} catch (err) {
 			toast.error(getError(err));
@@ -150,11 +153,8 @@ export default function ProductEditScreen() {
 	};
 
 	const deleteFileHandler = async (fileName, f) => {
-		console.log(fileName, f);
-		console.log(images);
-		console.log(images.filter((x) => x !== fileName));
 		setImages(images.filter((x) => x !== fileName));
-		toast.success("Image removed successfully. click Update to apply it");
+		toast.success("Image removed successfully. Click Update to apply it");
 	};
 
 	return (
