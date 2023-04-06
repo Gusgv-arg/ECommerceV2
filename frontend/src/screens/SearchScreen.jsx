@@ -198,7 +198,7 @@ export default function SearchScreen() {
 						<h5>Avg. Customer Review</h5>
 						<ul>
 							{ratings.map((r) => (
-								<li key={r.name}>
+								<li key={r.name} className="no-dots">
 									<Link
 										to={getFilterUrl({ rating: r.rating })}
 										className={`${r.rating}` === `${rating}` ? "text-bold" : ""}
@@ -207,7 +207,7 @@ export default function SearchScreen() {
 									</Link>
 								</li>
 							))}
-							<li>
+							<li className="no-dots">
 								<Link
 									to={getFilterUrl({ rating: "all" })}
 									className={rating === "all" ? "text-bold" : ""}

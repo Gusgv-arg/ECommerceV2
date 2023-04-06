@@ -87,8 +87,10 @@ button.thumbnail {
   padding: 0;
 }
 ul li :any-link{
-  text-decoration: none;
- 
+  text-decoration: none; 
+}
+.no-dots{
+  list-style: none;
 }
 /*In cards*/
 .no-link{
