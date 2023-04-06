@@ -9,6 +9,7 @@ import { Store } from "../Store";
 import { getError } from "../utils";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Table from "react-bootstrap/Table";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -130,7 +131,7 @@ export default function OrderListScreen() {
 				<MessageBox variant="danger">{error}</MessageBox>
 			) : (
 				<>
-					<table className="table">
+					<Table striped hover responsive className="table">
 						<thead>
 							<tr>
 								<th>ID</th>
@@ -177,7 +178,7 @@ export default function OrderListScreen() {
 								</tr>
 							))}
 						</tbody>
-					</table>
+					</Table>
 
 					<div>
 						{[...Array(pages).keys()].map((x) => (

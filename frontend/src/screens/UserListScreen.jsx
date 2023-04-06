@@ -9,6 +9,7 @@ import Button from "react-bootstrap/Button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Table from "react-bootstrap/Table";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -127,7 +128,7 @@ export default function UserListScreen() {
 				<MessageBox variant="danger">{error}</MessageBox>
 			) : (
 				<>
-					<table className="table">
+					<Table striped hover responsive className="table">
 						<thead>
 							<tr>
 								<th>ID</th>
@@ -164,7 +165,7 @@ export default function UserListScreen() {
 								</tr>
 							))}
 						</tbody>
-					</table>
+					</Table>
 					<div>
 						{[...Array(pages).keys()].map((x) => (
 							<Link
