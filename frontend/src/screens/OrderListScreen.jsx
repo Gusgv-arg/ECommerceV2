@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet-async";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -81,7 +81,6 @@ export default function OrderListScreen() {
 		}
 	}, [userInfo, successDelete, page]);
 
-	
 	const deleteConfirm = async (order) => {
 		try {
 			dispatch({ type: "DELETE_REQUEST" });
@@ -89,7 +88,6 @@ export default function OrderListScreen() {
 				headers: { Authorization: `Bearer ${userInfo.token}` },
 			});
 			toast.success("Order deleted successfully");
-
 			dispatch({ type: "DELETE_SUCCESS" });
 		} catch (err) {
 			toast.error(getError(error));
@@ -99,24 +97,22 @@ export default function OrderListScreen() {
 		}
 	};
 
-	const deleteHandler=(order)=>{
+	const deleteHandler = (order) => {
 		Swal.fire({
 			title: "Atention",
 			text: "Are you sure you want to delete this order?",
 			icon: "warning",
 			showDenyButton: true,
 			denyButtonText: "Cancel",
-			confirmButtonText: "Confirm" 
-
-		}).then(response=>{
-			if (response.isConfirmed){
-				deleteConfirm(order)
-			} else{
-				return
+			confirmButtonText: "Confirm",
+		}).then((response) => {
+			if (response.isConfirmed) {
+				deleteConfirm(order);
+			} else {
+				return;
 			}
-		})
-	}
-
+		});
+	};
 
 	return (
 		<div>
@@ -166,11 +162,11 @@ export default function OrderListScreen() {
 										>
 											Details
 										</Button>
-										&nbsp;										
+										&nbsp;
 										<Button
 											type="button"
 											variant="light"
-											onClick={() => deleteHandler(order)}											
+											onClick={() => deleteHandler(order)}
 										>
 											<i className="fas fa-trash"></i>
 										</Button>

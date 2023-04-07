@@ -38,11 +38,27 @@ function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 	const { cart, userInfo } = state;
 
+	const updateStockDb = async (item, modStock) => {
+		await axios.put(
+			`/api/products/customer/${item}`,
+			{
+				_id: item,
+				stock: modStock,
+			},
+			{
+				headers: { Authorization: `Bearer ${userInfo.token}` },
+			}
+		);
+		return;
+	};
+
 	const signoutHandler = () => {
 		ctxDispatch({ type: "USER_SIGNOUT" });
 		localStorage.removeItem("userInfo");
 		localStorage.removeItem("shippingAddress");
 		localStorage.removeItem("paymentMethod");
+		cart.cartItems &&
+			cart.cartItems.map((item) => updateStockDb(item._id, item.quantity));
 		localStorage.removeItem("cartItems");
 		window.location.href = "/signin";
 	};
@@ -74,7 +90,7 @@ function App() {
 				}
 			>
 				<ToastContainer position="bottom-center" limit={1} />
-				
+
 				<header>
 					<Navbar bg="dark" variant="dark" expand="lg">
 						<Container>
@@ -91,7 +107,7 @@ function App() {
 							<Navbar.Toggle aria-controls="basic-navbar-nav" />
 
 							<Navbar.Collapse id="basic-navbar-nav">
-								<SearchBox className="ms-5" ></SearchBox>
+								<SearchBox className="ms-5"></SearchBox>
 
 								<Nav className="me-auto w-100 justify-content-end">
 									<Link to="/cart" className="nav-link">

@@ -13,7 +13,21 @@ function Product(props) {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 	const {
 		cart: { cartItems },
+		userInfo
 	} = state;
+
+	const updateStockDb = async (item, modStock) => {
+		await axios.put(
+			`/api/products/customer/${item._id}`,
+			{
+				_id: item._id,
+				stock: modStock,
+			},
+			{
+				headers: { Authorization: `Bearer ${userInfo.token}` },
+			}
+		);
+	};
 
 	const addToCartHandler = async (item) => {
 		const existItem = cartItems.find((x) => x._id === product._id);
@@ -28,6 +42,7 @@ function Product(props) {
 			payload: { ...item, quantity },
 		});
 		toast.success("Product added successfully!")
+		updateStockDb(item, -1)
 	};
 
 	return (

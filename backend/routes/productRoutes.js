@@ -15,10 +15,10 @@ productRouter.get("/", async (req, res) => {
 	const products = await Product.find()
 		.skip(pageSize * (page - 1))
 		.limit(pageSize);
-	
-  const countProducts = await Product.countDocuments();
-	
-  res.send({
+
+	const countProducts = await Product.countDocuments();
+
+	res.send({
 		products,
 		countProducts,
 		page,
@@ -53,6 +53,24 @@ productRouter.post(
 		});
 		const product = await newProduct.save();
 		res.send({ message: "Product Created", product });
+	})
+);
+
+productRouter.put(
+	"/customer/:id",
+	isAuth,
+	expressAsyncHandler(async (req, res) => {
+		const productId = req.params.id;
+		const modStock = req.body.stock;
+
+		const product = await Product.findById(productId);
+		if (product) {
+			product.stock = product.stock + modStock;
+			await product.save();
+			res.send({ message: "Product Stock Updated" });
+		} else {
+			res.status(404).send({ message: "Product Not Found" });
+		}
 	})
 );
 

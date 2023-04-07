@@ -18,12 +18,26 @@ export default function CartScreen() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 	const {
 		cart: { cartItems },
+		userInfo,
 	} = state;
 
-	const updateCartHandler = async (item, quantity) => {
+	const updateStockDb = async (item, modStock) => {
+		await axios.put(
+			`/api/products/customer/${item._id}`,
+			{
+				_id: item._id,
+				stock: modStock,
+			},
+			{
+				headers: { Authorization: `Bearer ${userInfo.token}` },
+			}
+		);
+	};
+
+	const updateCartHandler = async (item, quantity, modStock) => {
 		const { data } = await axios.get(`/api/products/${item._id}`);
-		if (data.stock < quantity || data.stock === quantity) {
-			/* window.alert("Sorry. Product is out of stock"); */
+		//if (data.stock < quantity || data.stock === quantity) {
+		if (data.stock === 0) {
 			toast.error("Sorry. We have no more stock of this Product.");
 			return;
 		}
@@ -32,11 +46,9 @@ export default function CartScreen() {
 			payload: { ...item, quantity },
 		});
 		toast.success("Product updated successfully");
+		updateStockDb(item, modStock);
 	};
 
-	/* const removeItemHandler = (item) => {
-		ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
-	}; */
 	const removeItemHandler = (item) => {
 		Swal.fire({
 			title: "Atention",
@@ -48,7 +60,8 @@ export default function CartScreen() {
 		}).then((response) => {
 			if (response.isConfirmed) {
 				ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
-				toast.success("Item removed successfully")
+				toast.success("Item removed successfully");
+				updateStockDb(item, item.quantity);
 			} else {
 				return;
 			}
@@ -87,7 +100,7 @@ export default function CartScreen() {
 										<Col md={3}>
 											<Button
 												onClick={() =>
-													updateCartHandler(item, item.quantity - 1)
+													updateCartHandler(item, item.quantity - 1, 1)
 												}
 												variant="light"
 												disabled={item.quantity === 1}
@@ -97,7 +110,7 @@ export default function CartScreen() {
 											<span>{item.quantity}</span>{" "}
 											<Button
 												onClick={() =>
-													updateCartHandler(item, item.quantity + 1)
+													updateCartHandler(item, item.quantity + 1, -1)
 												}
 												variant="light"
 												/* disabled={item.quantity === item.stock} */

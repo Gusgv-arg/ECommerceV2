@@ -30,7 +30,7 @@ const reducer = (state, action) => {
 	}
 };
 
-export default function HomeScree() {
+export default function HomeScreen() {
 	const [{ loading, error, products, pages }, dispatch] = useReducer(
 		logger(reducer),
 		{
