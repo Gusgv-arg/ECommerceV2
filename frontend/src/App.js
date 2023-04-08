@@ -92,7 +92,7 @@ function App() {
 				<ToastContainer position="bottom-center" limit={1} />
 
 				<header>
-					<Navbar bg="dark" variant="dark" expand="lg">
+					<Navbar bg="dark" variant="dark" expand="lg" fixed="top" >
 						<Container>
 							<Button
 								variant="dark"
@@ -164,7 +164,7 @@ function App() {
 				<div
 					className={
 						sidebarIsOpen
-							? "active-nav side-navbar d-flex justify-content-between flex-wrap flex-column"
+							? "active-nav side-navbar d-flex justify-content-between flex-wrap flex-column my-5"
 							: "side-navbar d-flex justify-content-between flex-wrap flex-column"
 					}
 				>
@@ -186,7 +186,7 @@ function App() {
 					</Nav>
 				</div>
 				<main>
-					<Container className="mt-3">
+					<Container className="my-5 nav-margin">
 						<Routes>
 							<Route path="/product/:slug" element={<ProductScreen />} />
 							<Route path="/cart" element={<CartScreen />} />

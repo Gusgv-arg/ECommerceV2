@@ -14,6 +14,9 @@ body {
 main {
   flex: 1;
 }
+.nav-margin{
+  margin-top: 5rem !important;
+}
 .btn-primary,
 .btn-outline-primary {
   background-color: #f0c040;  
