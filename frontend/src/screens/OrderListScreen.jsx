@@ -139,7 +139,7 @@ export default function OrderListScreen() {
 								<th>ACTIONS</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody group-divider >
 							{orders.map((order) => (
 								<tr key={order._id}>
 									<td>{order._id}</td>

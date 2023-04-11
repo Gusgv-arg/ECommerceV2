@@ -279,8 +279,8 @@ export default function OrderScreen() {
 				</Col>
 				<Col md={4}>
 					<Card className="mb-3">
-						<Card.Body>
-							<Card.Title>Order Summary</Card.Title>
+						<Card.Body> 
+							<Card.Title className="text-center">Order Summary</Card.Title>
 							<ListGroup variant="flush">
 								<ListGroup.Item>
 									<Row>
