@@ -1,3 +1,12 @@
+html{
+  box-sizing: border-box;
+}
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -17,6 +26,7 @@ main {
 .nav-margin{
   margin-top: 5rem !important;
 }
+
 .btn-primary,
 .btn-outline-primary {
   background-color: #f0c040;  

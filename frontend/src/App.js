@@ -106,10 +106,10 @@ function App() {
 
 							<Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-							<Navbar.Collapse id="basic-navbar-nav">
-								<SearchBox className="ms-5"></SearchBox>
+							<Navbar.Collapse id="basic-navbar-nav" className="d-flex justify-content-evenly">
+								<SearchBox></SearchBox>
 
-								<Nav className="me-auto w-100 justify-content-end">
+								<Nav className="">
 									<Link to="/cart" className="nav-link">
 										<i className="fa fa-shopping-cart" />{" "}
 										{cart.cartItems.length > 0 && (
