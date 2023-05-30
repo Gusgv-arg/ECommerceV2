@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import { generateToken, isAuth, isAdmin } from "../utils.js";
+import nodemailer from "nodemailer";
+import { transporter } from "../nodemailer/transporter.js";
+import { userCreateEmailTemplate } from "../nodemailer/userCreateEmailTemplate.js";
 
 const userRouter = express.Router();
 
@@ -121,6 +124,22 @@ userRouter.post(
 			password: bcrypt.hashSync(req.body.password),
 		});
 		const user = await newUser.save();
+		
+		const mailOptions = {
+			from: "gusgvillafane@gmail.com",
+			to: req.body.email,
+			subject: "Account Confirmation ECOMMERCEV2",
+			html: userCreateEmailTemplate(user)
+		};
+
+		transporter.sendMail(mailOptions, function (error, info) {
+			if (error) {
+				console.log(error);
+			} else {
+				console.log("email sent succesfuly ");
+			}
+		});
+		
 		res.send({
 			_id: user._id,
 			name: user.name,
@@ -130,8 +149,6 @@ userRouter.post(
 		});
 	})
 );
-
-
 
 userRouter.delete(
 	"/:id",

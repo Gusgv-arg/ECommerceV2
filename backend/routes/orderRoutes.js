@@ -4,6 +4,9 @@ import Order from "../models/orderModel.js";
 import { isAuth, isAdmin } from "../utils.js";
 import User from "../models/userModel.js";
 import Product from "../models/productModel.js";
+import nodemailer from "nodemailer";
+import { transporter } from "../nodemailer/transporter.js";
+import { payOrderEmailTemplate } from "../nodemailer/payOrderEmailTemplate.js";
 
 const orderRouter = express.Router();
 
@@ -24,7 +27,7 @@ orderRouter.get(
 			.limit(pageSize);
 
 		const countOrders = await Order.countDocuments();
-		
+
 		res.send({
 			orders,
 			countOrders,
@@ -124,7 +127,10 @@ orderRouter.put(
 	"/:id/pay",
 	isAuth,
 	expressAsyncHandler(async (req, res) => {
-		const order = await Order.findById(req.params.id);
+		const order = await Order.findById(req.params.id).populate(
+			"user",
+			"email name"
+		);
 		if (order) {
 			order.isPaid = true;
 			order.paidAt = Date.now();
@@ -136,6 +142,22 @@ orderRouter.put(
 			};
 
 			const updatedOrder = await order.save();
+
+			const mailOptions = {
+				from: "gusgvillafane@gmail.com",
+				to: `${order.user.name} <${order.user.email}>`,
+				subject: `New order E-CommerceV2 ${order._id}`,
+				html: payOrderEmailTemplate(order)
+			};
+
+			transporter.sendMail(mailOptions, function (error, info) {
+				if (error) {
+					console.log(error);
+				} else {
+					console.log("email sent succesfuly ");
+				}
+			});
+
 			res.send({ message: "Order Paid", order: updatedOrder });
 		} else {
 			res.status(404).send({ message: "Order Not Found" });
