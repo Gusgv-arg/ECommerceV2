@@ -33,6 +33,8 @@ import ProductEditScreen from "./screens/ProductEditScreen";
 import OrderListScreen from "./screens/OrderListScreen";
 import UserListScreen from "./screens/UserListScreen";
 import UserEditScreen from "./screens/UserEditScreen";
+import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -92,7 +94,7 @@ function App() {
 				<ToastContainer position="bottom-center" limit={1} />
 
 				<header>
-					<Navbar bg="dark" variant="dark" expand="lg" fixed="top" >
+					<Navbar bg="dark" variant="dark" expand="lg" fixed="top">
 						<Container>
 							<Button
 								variant="dark"
@@ -106,7 +108,10 @@ function App() {
 
 							<Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-							<Navbar.Collapse id="basic-navbar-nav" className="d-flex justify-content-evenly">
+							<Navbar.Collapse
+								id="basic-navbar-nav"
+								className="d-flex justify-content-evenly"
+							>
 								<SearchBox></SearchBox>
 
 								<Nav className="">
@@ -192,6 +197,14 @@ function App() {
 							<Route path="/cart" element={<CartScreen />} />
 							<Route path="/signin" element={<SigninScreen />} />
 							<Route path="/signup" element={<SignupScreen />} />
+							<Route
+								path="/forget-password"
+								element={<ForgetPasswordScreen />}
+							/>
+							<Route
+								path="/reset-password/:token"
+								element={<ResetPasswordScreen />}
+							/>
 							<Route
 								path="/profile"
 								element={
