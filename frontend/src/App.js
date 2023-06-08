@@ -36,6 +36,7 @@ import UserEditScreen from "./screens/UserEditScreen";
 import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import Footer from "./components/Footer";
+import About from "./screens/About";
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -192,12 +193,13 @@ function App() {
 					</Nav>
 				</div>
 				<main>
-					<Container className="my-5 nav-margin">
+					<Container className="my-5 nav-margin d-flex">
 						<Routes>
 							<Route path="/product/:slug" element={<ProductScreen />} />
 							<Route path="/cart" element={<CartScreen />} />
 							<Route path="/signin" element={<SigninScreen />} />
 							<Route path="/signup" element={<SignupScreen />} />
+							<Route path="/about" element={<About />} />
 							<Route
 								path="/forget-password"
 								element={<ForgetPasswordScreen />}
