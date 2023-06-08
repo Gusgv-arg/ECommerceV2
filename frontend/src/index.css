@@ -110,3 +110,13 @@ ul li :any-link{
   text-decoration: none;
   color: rgb(17, 9, 99)
 }
+
+/*Icons*/
+.icons{
+  font-weight: bold !important;
+}
+.icons:hover{
+  font-weight: bold;
+  color: #c6c2b4 !important;
+  transform: scale(1.2)
+}
