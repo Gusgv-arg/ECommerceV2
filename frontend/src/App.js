@@ -230,7 +230,7 @@ function App() {
 					</Nav>
 				</div>
 				<main>
-					<Container className="my-5 nav-margin d-flex">
+					<Container className="my-5 nav-margin">
 						<Routes>
 							<Route path="/product/:slug" element={<ProductScreen />} />
 							<Route path="/cart" element={<CartScreen />} />

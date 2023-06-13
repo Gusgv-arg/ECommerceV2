@@ -40,7 +40,7 @@ export default function ForgetPasswordScreen() {
       <Helmet>
         <title>Forget Password</title>
       </Helmet>
-      <h1 className="my-3">Forget Password</h1>
+      <h3 className="my-3">Forget Password</h3>
       <Form onSubmit={submitHandler}>
         <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email</Form.Label>

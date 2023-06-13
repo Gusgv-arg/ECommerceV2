@@ -8,7 +8,7 @@ export default function About() {
 		<Container className="">
 			<Row className="align-items-center mt-5">
 				<Col md={3}>
-					<h4>About this project</h4>
+					<h3>About this project</h3>
 				</Col>
 				<Col>
 					<p> Hi👋!</p>

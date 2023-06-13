@@ -77,7 +77,7 @@ export default function CartScreen() {
 			<Helmet>
 				<title>Shopping Cart</title>
 			</Helmet>
-			<h1>Shopping Cart</h1>
+			<h3>Shopping Cart</h3>
 			<Row>
 				<Col md={8}>
 					{cartItems.length === 0 ? (
@@ -138,11 +138,11 @@ export default function CartScreen() {
 						<Card.Body>
 							<ListGroup variant="flush">
 								<ListGroup.Item>
-									<h3>
+									<h4>
 										Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{" "}
 										items) : $
 										{cartItems.reduce((a, c) => a + c.price * c.quantity, 0)}
-									</h3>
+									</h4>
 								</ListGroup.Item>
 								<ListGroup.Item>
 									<div className="d-grid">

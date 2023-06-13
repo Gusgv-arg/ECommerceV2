@@ -87,7 +87,7 @@ export default function PlaceOrderScreen() {
 			<Helmet>
 				<title>Preview Order</title>
 			</Helmet>
-			<h1 className="my-3">Preview Order</h1>
+			<h3 className="my-3">Preview Order</h3>
 			<Row>
 				<Col md={8}>
 					<Card className="mb-3">

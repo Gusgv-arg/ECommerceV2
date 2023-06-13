@@ -48,7 +48,7 @@ export default function ResetPasswordScreen() {
       <Helmet>
         <title>Reset Password</title>
       </Helmet>
-      <h1 className="my-3">Reset Password</h1>
+      <h3 className="my-3">Reset Password</h3>
       <Form onSubmit={submitHandler}>
         <Form.Group className="mb-3" controlId="password">
           <Form.Label>New Password</Form.Label>
