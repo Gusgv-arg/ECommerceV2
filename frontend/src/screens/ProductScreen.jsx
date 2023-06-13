@@ -149,7 +149,7 @@ export default function ProductScreen() {
 								numReviews={product.numReviews}
 							></Rating>
 						</ListGroup.Item>
-						<ListGroup.Item>Pirce : ${product.price}</ListGroup.Item>
+						<ListGroup.Item><span className="text-bold">Price:</span> ${product.price}</ListGroup.Item>
 						<ListGroup.Item>
 							<Row xs={1} md={2} className="g-2">
 								{[product.image, ...product.images].map((x) => (
@@ -168,8 +168,8 @@ export default function ProductScreen() {
 								))}
 							</Row>
 						</ListGroup.Item>
-						<ListGroup.Item>
-							Description:
+						<ListGroup.Item >
+							<span className="text-bold" >Description:</span>
 							<p>{product.description}</p>
 						</ListGroup.Item>
 					</ListGroup>
@@ -212,10 +212,10 @@ export default function ProductScreen() {
 				</Col>
 			</Row>
 			<div className="my-3">
-				<h2 ref={reviewsRef}>Reviews</h2>
+				<h3 ref={reviewsRef}>Reviews</h3>
 				<div className="mb-3">
 					{product.reviews.length === 0 && (
-						<MessageBox>There is no review</MessageBox>
+						<MessageBox>There are no reviews</MessageBox>
 					)}
 				</div>
 				<ListGroup>
@@ -230,8 +230,8 @@ export default function ProductScreen() {
 				</ListGroup>
 				<div className="my-3">
 					{userInfo ? (
-						<form onSubmit={submitHandler}>
-							<h2>Write a customer review</h2>
+						<form onSubmit={submitHandler} className="col-4">
+							<h3>Write a customer review</h3>
 							<Form.Group className="mb-3" controlId="rating">
 								<Form.Label>Rating</Form.Label>
 								<Form.Select

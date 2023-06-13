@@ -62,7 +62,7 @@ export default function HomeScreen() {
 			<Helmet>
 				<title>E-Commerce V2</title>
 			</Helmet>
-			<h3>Featured Products</h3>
+			<h4>Featured Products</h4>
 			<div className="products">
 				{loading ? (
 					<div>
