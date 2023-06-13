@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Gusgv-arg/ECommerceV2/issues"
   },
-  "homepage": "https://github.com/Gusgv-arg/ECommerceV2#readme"
+  "homepage": "https://github.com/Gusgv-arg/ECommerceV2#readme",
+  "dependencies": {
+    "@auth0/auth0-react": "^2.1.0"
+  }
 }

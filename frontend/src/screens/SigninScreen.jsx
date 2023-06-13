@@ -8,10 +8,13 @@ import { useContext, useEffect, useState } from "react";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function SigninScreen() {
 	const navigate = useNavigate();
 	const { search } = useLocation();
+
+	const { loginWithRedirect } = useAuth0();
 
 	const redirectInUrl = new URLSearchParams(search).get("redirect");
 	const redirect = redirectInUrl ? redirectInUrl : "/";
@@ -40,15 +43,22 @@ export default function SigninScreen() {
 	useEffect(() => {
 		if (userInfo) {
 			navigate(redirect);
-		}
+		}				
 	}, [navigate, redirect, userInfo]);
 
 	return (
 		<Container className="small-container">
 			<Helmet>
 				<title>Sign In</title>
-			</Helmet>
-			<h1 className="my-3">Sign In</h1>
+			</Helmet>			
+			<h3 className="my-4">Sign in</h3>
+			<div className="mb-3">
+				<Button type="submit" className="" onClick={() => loginWithRedirect()}>
+					Sign In or Create Account with <i className="fab fa-google mx-1 text-dark icons" />
+					oogle
+				</Button>
+			</div>
+			<p className="mb-3 text-bold">----- Or with Email and Password -----</p>
 			<Form onSubmit={submitHandler}>
 				<Form.Group className="mb-3" controlId="email">
 					<Form.Label>Email</Form.Label>

@@ -37,6 +37,7 @@ userRouter.get(
 	})
 );
 
+/*Get 1 user*/
 userRouter.get(
 	"/:id",
 	isAuth,
@@ -51,6 +52,7 @@ userRouter.get(
 	})
 );
 
+/*Modify user*/
 userRouter.put(
 	"/profile",
 	isAuth,
@@ -98,7 +100,7 @@ userRouter.post(
 				from: "ECOMMERCEV2 <gusgvillafane@gmail.com>",
 				to: `${user.name} <${user.email}>`,
 				subject: "Reset Password - ECOMMERCEV2",
-				html: resetPasswordEmailTemplate(baseUrl, token)
+				html: resetPasswordEmailTemplate(baseUrl, token),
 			};
 
 			transporter.sendMail(mailOptions, function (error, info) {
@@ -140,6 +142,7 @@ userRouter.post(
 	})
 );
 
+/*Modify user by admin*/
 userRouter.put(
 	"/:id",
 	isAuth,
@@ -158,11 +161,13 @@ userRouter.put(
 	})
 );
 
+/*Login user*/
 userRouter.post(
 	"/signin",
 	expressAsyncHandler(async (req, res) => {
 		const user = await User.findOne({ email: req.body.email });
-		if (user) {
+		
+		if (user && !bcrypt.compareSync(user.email, user.password)) {
 			if (bcrypt.compareSync(req.body.password, user.password)) {
 				res.send({
 					_id: user._id,
@@ -172,12 +177,30 @@ userRouter.post(
 					token: generateToken(user),
 				});
 				return;
+			} else {
+				res.status(401).send({ message: "Invalid password" });
 			}
 		}
-		res.status(401).send({ message: "Invalid email or password" });
+		if (user &&	bcrypt.compareSync(user.email, user.password) && req.body.password === user.email) {
+			res.send({
+				_id: user._id,
+				name: user.name,
+				email: user.email,
+				isAdmin: user.isAdmin,
+				token: generateToken(user),
+			});
+			return;
+		} else {
+			if (user){
+				res.status(401).send({message:"You are already registered with Google. Please Login with Google"});
+			} else {
+				res.status(401).send({message:"You are not registered. Please create an account or Login with Google"});
+			}
+		}
 	})
 );
 
+/*Create user*/
 userRouter.post(
 	"/signup",
 	expressAsyncHandler(async (req, res) => {

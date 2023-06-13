@@ -37,10 +37,13 @@ import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import Footer from "./components/Footer";
 import About from "./screens/About";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 	const { cart, userInfo } = state;
+
+	const { logout, user, isAuthenticated } = useAuth0();
 
 	const updateStockDb = async (item, modStock) => {
 		await axios.put(
@@ -64,6 +67,9 @@ function App() {
 		cart.cartItems &&
 			cart.cartItems.map((item) => updateStockDb(item._id, item.quantity));
 		localStorage.removeItem("cartItems");
+		if (isAuthenticated) {
+			logout();
+		}
 		window.location.href = "/signin";
 	};
 
@@ -79,10 +85,41 @@ function App() {
 				toast.error(getError(err));
 			}
 		};
+
 		if (sidebarIsOpen) {
 			fetchCategories();
 		}
-	}, [sidebarIsOpen]);
+
+		const signupGoogle = async (user) => {
+			try {
+				const { data } = await axios.post("api/users/signup", {
+					name: user.name,
+					email: user.email,
+					password: user.email,
+				});
+				ctxDispatch({ type: "USER_SIGNIN", payload: data });
+				localStorage.setItem("userInfo", JSON.stringify(data));
+			} catch (err) {
+				toast.error(getError(err));
+			}
+		};
+
+		const signinGoogle = async (user) => {
+			try {
+				const { data } = await axios.post("/api/users/signin", {
+					email: user.email,
+					password: user.email,
+				});
+				ctxDispatch({ type: "USER_SIGNIN", payload: data });
+				localStorage.setItem("userInfo", JSON.stringify(data));
+			} catch (err) {
+				signupGoogle(user);
+			}
+		};
+		if (isAuthenticated) {
+			signinGoogle(user);
+		}
+	}, [sidebarIsOpen, isAuthenticated, user, ctxDispatch]);
 
 	return (
 		<BrowserRouter>

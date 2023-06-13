@@ -56,7 +56,8 @@ export default function SignupScreen() {
 			<Helmet>
 				<title>Sign Up</title>
 			</Helmet>
-			<h1 className="my-3">Sign Up</h1>
+			<h3 className="my-4">Sign Up</h3>
+			<p className="mb-3 text-bold">----- Or with Email and Password -----</p>
 			<Form onSubmit={submitHandler}>
 				<Form.Group className="mb-3" controlId="name">
 					<Form.Label>Name</Form.Label>
