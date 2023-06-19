@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import seedRouter from "./routes/seedRoutes.js";
 import productRouter from "./routes/productRoutes.js";
-//import data from "./data.js";
 import userRouter from "./routes/userRoutes.js";
 import orderRouter from './routes/orderRoutes.js'
 import uploadRouter from "./routes/uploadRoutes.js";
 import path from 'path';
+import morgan from "morgan";
 
 dotenv.config();
 
@@ -21,7 +21,7 @@ mongoose
 	});
 
 const app = express();
-
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

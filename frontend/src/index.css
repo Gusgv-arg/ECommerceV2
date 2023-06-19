@@ -120,3 +120,10 @@ ul li :any-link{
   color: #c6c2b4 !important;
   transform: scale(1.2)
 }
+
+.btn-Mercado-Pago{
+  width: 10rem;
+}
+.btn-Mercado-Pago img{
+  height: 1.5rem;
+}

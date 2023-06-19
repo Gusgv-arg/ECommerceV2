@@ -53,16 +53,17 @@ export default function PaymentMethodScreen() {
 					<div className="mb-3">
 						<Form.Check
 							type="radio"
-							id="Stripe"
-							label="Stripe"
-							value="Stripe"
-							checked={paymentMethodName === "Stripe"}
+							id="Mercado Pago"
+							label="Mercado Pago"
+							value="Mercado Pago"
+							checked={paymentMethodName === "Mercado Pago"}
 							onChange={(e) => setPaymentMethod(e.target.value)}
 						/>
 					</div>
 					<div className="mb-3">
 						<Button type="submit">Continue</Button>
-					</div>
+					</div>					
+					<p className="my-5"><span className="text-bold">Important!</span> In this Sandbox version, Mercado Pago payment will not receive the result due to the lack of SSL certificate.</p>
 				</Form>
 			</div>
 		</div>

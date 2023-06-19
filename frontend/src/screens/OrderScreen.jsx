@@ -15,6 +15,9 @@ import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Swal from "sweetalert2";
+import mercado_pago from "../images/logo-mercado-pago.webp"
+
+
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -50,8 +53,9 @@ function reducer(state, action) {
 }
 
 export default function OrderScreen() {
+
 	const { state } = useContext(Store);
-	const { userInfo } = state;
+	const { userInfo, cart } = state;
 
 	const params = useParams();
 	const { id: orderId } = params;
@@ -196,15 +200,15 @@ export default function OrderScreen() {
 			showDenyButton: true,
 			denyButtonText: "Cancel",
 			confirmButtonText: "Confirm",
-		}).then(response=>{
-			if (response.isConfirmed){
-				deliverOrderConfirmHandler()
+		}).then((response) => {
+			if (response.isConfirmed) {
+				deliverOrderConfirmHandler();
 			} else {
-				return
+				return;
 			}
 		});
 	};
-
+	console.log("order", order);
 	return loading ? (
 		<LoadingBox></LoadingBox>
 	) : error ? (
@@ -279,7 +283,7 @@ export default function OrderScreen() {
 				</Col>
 				<Col md={4}>
 					<Card className="mb-3">
-						<Card.Body> 
+						<Card.Body>
 							<Card.Title className="text-center">Order Summary</Card.Title>
 							<ListGroup variant="flush">
 								<ListGroup.Item>
@@ -312,16 +316,39 @@ export default function OrderScreen() {
 								</ListGroup.Item>
 								{!order.isPaid && (
 									<ListGroup.Item>
-										{isPending ? (
+										{cart.paymentMethod === "Mercado Pago" && (
+											<div className="d-flex justify-content-around align-items-center">
+												<div>Pay with </div>
+
+												<Button className="btn-Mercado-Pago"
+													onClick={() => {
+														axios
+															.post("/api/orders/pay_mercadopago", order)
+															.then(
+																(res) =>
+																	(window.location.href =
+																		res.data.result.body.init_point)
+															)
+															.then(console.log(window.location.href));
+													}}
+												>
+													<img src={mercado_pago} alt="image_mercado_pago" />													
+												</Button>
+											</div>
+										)}
+
+										{cart.paymentMethod === "PayPal" && isPending ? (
 											<LoadingBox />
 										) : (
-											<div>
-												<PayPalButtons
-													createOrder={createOrder}
-													onApprove={onApprove}
-													onError={onError}
-												></PayPalButtons>
-											</div>
+											cart.paymentMethod === "PayPal" && (
+												<div>
+													<PayPalButtons
+														createOrder={createOrder}
+														onApprove={onApprove}
+														onError={onError}
+													></PayPalButtons>
+												</div>
+											)
 										)}
 										{loadingPay && <LoadingBox></LoadingBox>}
 									</ListGroup.Item>
