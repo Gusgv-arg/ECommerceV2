@@ -8,29 +8,30 @@ import CheckoutSteps from "../components/CheckoutSteps";
 
 export default function ShippingAddressScreen() {
 	const navigate = useNavigate();
-	
-    const { state, dispatch: ctxDispatch } = useContext(Store);
-	
-    const {
+
+	const { state, dispatch: ctxDispatch } = useContext(Store);
+
+	const {
+		fullBox,
 		userInfo,
 		cart: { shippingAddress },
 	} = state;
-	
-    const [fullName, setFullName] = useState(shippingAddress.fullName || "");
+
+	const [fullName, setFullName] = useState(shippingAddress.fullName || "");
 	const [address, setAddress] = useState(shippingAddress.address || "");
 	const [city, setCity] = useState(shippingAddress.city || "");
 	const [postalCode, setPostalCode] = useState(
 		shippingAddress.postalCode || ""
 	);
-    const [country, setCountry] = useState(shippingAddress.country || "");
-	
-    useEffect(() => {
+	const [country, setCountry] = useState(shippingAddress.country || "");
+
+	useEffect(() => {
 		if (!userInfo) {
 			navigate("/signin?redirect=/shipping");
 		}
 	}, [userInfo, navigate]);
-	
-    const submitHandler = (e) => {
+
+	const submitHandler = (e) => {
 		e.preventDefault();
 		ctxDispatch({
 			type: "SAVE_SHIPPING_ADDRESS",
@@ -40,6 +41,7 @@ export default function ShippingAddressScreen() {
 				city,
 				postalCode,
 				country,
+				location: shippingAddress.location,
 			},
 		});
 		localStorage.setItem(
@@ -50,10 +52,16 @@ export default function ShippingAddressScreen() {
 				city,
 				postalCode,
 				country,
+				location: shippingAddress.location,
 			})
 		);
 		navigate("/payment");
 	};
+
+	useEffect(() => {
+		ctxDispatch({ type: "SET_FULLBOX_OFF" });
+	}, [ctxDispatch, fullBox]);
+
 	return (
 		<div>
 			<Helmet>
@@ -104,6 +112,24 @@ export default function ShippingAddressScreen() {
 							required
 						/>
 					</Form.Group>
+					<div className="mb-3">
+						<Button
+							id="chooseOnMap"
+							type="button"
+							variant="secondary"
+							onClick={() => navigate("/map")}
+						>
+							Choose Location On Map
+						</Button>
+						{shippingAddress.location && shippingAddress.location.lat ? (
+							<div>
+								Latitude: {shippingAddress.location.lat}{" "} 
+								Longitude:{shippingAddress.location.lng}
+							</div>
+						) : (
+							<div>No location</div>
+						)}
+					</div>
 					<div className="mb-3">
 						<Button variant="primary" type="submit">
 							Continue

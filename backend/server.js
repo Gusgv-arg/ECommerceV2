@@ -4,9 +4,9 @@ import dotenv from "dotenv";
 import seedRouter from "./routes/seedRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-import orderRouter from './routes/orderRoutes.js'
+import orderRouter from "./routes/orderRoutes.js";
 import uploadRouter from "./routes/uploadRoutes.js";
-import path from 'path';
+import path from "path";
 import morgan from "morgan";
 
 dotenv.config();
@@ -27,20 +27,24 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/seed", seedRouter);
 app.use("/api/products", productRouter);
-app.use('/api/upload', uploadRouter);
+app.use("/api/upload", uploadRouter);
 app.use("/api/users", userRouter);
-app.use('/api/orders', orderRouter);
-app.get('/api/keys/paypal', (req, res) => {
-	res.send(process.env.PAYPAL_CLIENT_ID || 'sb');
-  });
-  
+app.use("/api/orders", orderRouter);
+app.get("/api/keys/paypal", (req, res) => {
+	res.send(process.env.PAYPAL_CLIENT_ID || "sb");
+});
+app.get("/api/keys/google", (req, res) => {
+	res.send({ key: process.env.GOOGLE_API_KEY || "" });
+});
+
 //For deploy
 const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
-app.use(express.static(path.join(__dirname, '/frontend/build')));
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-app.get('*', (req, res) =>
-res.sendFile(path.join(__dirname, '/frontend/build/index.html')))
+app.get("*", (req, res) =>
+	res.sendFile(path.join(__dirname, "/frontend/build/index.html"))
+);
 
 //Catches errors due to express-async-handler
 app.use((err, req, res, next) => {

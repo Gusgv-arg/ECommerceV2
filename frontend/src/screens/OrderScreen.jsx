@@ -15,9 +15,7 @@ import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Swal from "sweetalert2";
-import mercado_pago from "../images/logo-mercado-pago.webp"
-
-
+import mercado_pago from "../images/logo-mercado-pago.webp";
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -53,7 +51,6 @@ function reducer(state, action) {
 }
 
 export default function OrderScreen() {
-
 	const { state } = useContext(Store);
 	const { userInfo, cart } = state;
 
@@ -229,6 +226,16 @@ export default function OrderScreen() {
 								<strong>Address: </strong> {order.shippingAddress.address},
 								{order.shippingAddress.city}, {order.shippingAddress.postalCode}
 								,{order.shippingAddress.country}
+								&nbsp;
+								{order.shippingAddress.location &&
+									order.shippingAddress.location.lat && (
+										<Link
+											target="_new"
+											to={`https://maps.google.com?q=${order.shippingAddress.location.lat},${order.shippingAddress.location.lng}`}
+										>
+											Show On Map
+										</Link>
+									)}
 							</Card.Text>
 							{order.isDelivered ? (
 								<MessageBox variant="success">
@@ -320,7 +327,8 @@ export default function OrderScreen() {
 											<div className="d-flex justify-content-around align-items-center">
 												<div>Pay with </div>
 
-												<Button className="btn-Mercado-Pago"
+												<Button
+													className="btn-Mercado-Pago"
 													onClick={() => {
 														axios
 															.post("/api/orders/pay_mercadopago", order)
@@ -332,7 +340,7 @@ export default function OrderScreen() {
 															.then(console.log(window.location.href));
 													}}
 												>
-													<img src={mercado_pago} alt="image_mercado_pago" />													
+													<img src={mercado_pago} alt="image_mercado_pago" />
 												</Button>
 											</div>
 										)}
