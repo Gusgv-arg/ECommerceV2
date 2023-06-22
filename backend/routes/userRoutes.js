@@ -3,7 +3,7 @@ import { isAuth, isAdmin } from "../utils.js";
 import { getUsers } from "../controllers/userControllers/getUsers.js";
 import { getUser } from "../controllers/userControllers/getUser.js";
 import { modifyUser } from "../controllers/userControllers/modifyUser.js";
-import { modifyuserByAdmin } from "../controllers/userControllers/modifyUserByAdmin.js";
+import { modifyUserByAdmin } from "../controllers/userControllers/modifyUserByAdmin.js";
 import { forgetPassword } from "../controllers/userControllers/forgetPassword.js";
 import { resetPassword } from "../controllers/userControllers/resetPassword.js";
 import { signinUser } from "../controllers/userControllers/signinUser.js";
@@ -18,7 +18,7 @@ userRouter.get("/:id", isAuth, isAdmin, getUser);
 
 userRouter.put("/profile", isAuth, modifyUser);
 
-userRouter.put("/:id", isAuth, isAdmin, modifyuserByAdmin);
+userRouter.put("/:id", isAuth, isAdmin, modifyUserByAdmin);
 
 userRouter.post("/forget-password", forgetPassword);
 

@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import User from "../../models/userModel.js";
 
-export const modifyuserByAdmin = expressAsyncHandler(async (req, res) => {
+export const modifyUserByAdmin = expressAsyncHandler(async (req, res) => {
 	const user = await User.findById(req.params.id);
 	if (user) {
 		user.name = req.body.name || user.name;
