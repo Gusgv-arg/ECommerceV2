@@ -1,258 +1,33 @@
 import express from "express";
-import bcrypt from "bcryptjs";
-import expressAsyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
-import { generateToken, isAuth, isAdmin, baseUrl } from "../utils.js";
-import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import { transporter } from "../nodemailer/transporter.js";
-import { userCreateEmailTemplate } from "../nodemailer/userCreateEmailTemplate.js";
-import { resetPasswordEmailTemplate } from "../nodemailer/resetPasswordEmailtemplate.js";
+import { isAuth, isAdmin } from "../utils.js";
+import { getUsers } from "../controllers/userControllers/getUsers.js";
+import { getUser } from "../controllers/userControllers/getUser.js";
+import { modifyUser } from "../controllers/userControllers/modifyUser.js";
+import { modifyuserByAdmin } from "../controllers/userControllers/modifyUserByAdmin.js";
+import { forgetPassword } from "../controllers/userControllers/forgetPassword.js";
+import { resetPassword } from "../controllers/userControllers/resetPassword.js";
+import { signinUser } from "../controllers/userControllers/signinUser.js";
+import { signupUser } from "../controllers/userControllers/signupUser.js";
+import { deleteUser } from "../controllers/userControllers/deleteuser.js";
 
 const userRouter = express.Router();
 
-const PAGE_SIZE = 6;
+userRouter.get("/", isAuth, isAdmin, getUsers);
 
-userRouter.get(
-	"/",
-	isAuth,
-	isAdmin,
-	expressAsyncHandler(async (req, res) => {
-		const { query } = req;
-		const page = query.page || 1;
-		const pageSize = query.pageSize || PAGE_SIZE;
+userRouter.get("/:id", isAuth, isAdmin, getUser);
 
-		const users = await User.find({})
-			.skip(pageSize * (page - 1))
-			.limit(pageSize);
+userRouter.put("/profile", isAuth, modifyUser);
 
-		const countUsers = await User.countDocuments();
+userRouter.put("/:id", isAuth, isAdmin, modifyuserByAdmin);
 
-		res.send({
-			users,
-			countUsers,
-			page,
-			pages: Math.ceil(countUsers / pageSize),
-		});
-	})
-);
+userRouter.post("/forget-password", forgetPassword);
 
-/*Get 1 user*/
-userRouter.get(
-	"/:id",
-	isAuth,
-	isAdmin,
-	expressAsyncHandler(async (req, res) => {
-		const user = await User.findById(req.params.id);
-		if (user) {
-			res.send(user);
-		} else {
-			res.status(404).send({ message: "User Not Found" });
-		}
-	})
-);
+userRouter.post("/reset-password", resetPassword);
 
-/*Modify user*/
-userRouter.put(
-	"/profile",
-	isAuth,
-	expressAsyncHandler(async (req, res) => {
-		const user = await User.findById(req.user._id);
-		if (user) {
-			user.name = req.body.name || user.name;
-			user.email = req.body.email || user.email;
-			if (req.body.password) {
-				user.password = bcrypt.hashSync(req.body.password, 8);
-			} else {
-				user.password = user.password;
-			}
+userRouter.post("/signin", signinUser);
 
-			const updatedUser = await user.save();
-			res.send({
-				_id: updatedUser._id,
-				name: updatedUser.name,
-				email: updatedUser.email,
-				isAdmin: updatedUser.isAdmin,
-				token: generateToken(updatedUser),
-			});
-		} else {
-			res.status(404).send({ message: "User not found" });
-		}
-	})
-);
+userRouter.post("/signup", signupUser);
 
-userRouter.post(
-	"/forget-password",
-	expressAsyncHandler(async (req, res) => {
-		const user = await User.findOne({ email: req.body.email });
-
-		if (user) {
-			const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-				expiresIn: "3h",
-			});
-			user.resetToken = token;
-			await user.save();
-
-			//reset link
-			console.log(`${baseUrl()}/reset-password/${token}`);
-
-			const mailOptions = {
-				from: "ECOMMERCEV2 <gusgvillafane@gmail.com>",
-				to: `${user.name} <${user.email}>`,
-				subject: "Reset Password - ECOMMERCEV2",
-				html: resetPasswordEmailTemplate(baseUrl, token),
-			};
-
-			transporter.sendMail(mailOptions, function (error, info) {
-				if (error) {
-					console.log(error);
-				} else {
-					console.log("Reset password email sent succesfuly ");
-				}
-			});
-
-			res.send({ message: "We sent reset password link to your email." });
-		} else {
-			res.status(404).send({ message: "User not found" });
-		}
-	})
-);
-
-userRouter.post(
-	"/reset-password",
-	expressAsyncHandler(async (req, res) => {
-		jwt.verify(req.body.token, process.env.JWT_SECRET, async (err, decode) => {
-			if (err) {
-				res.status(401).send({ message: "Invalid Token" });
-			} else {
-				const user = await User.findOne({ resetToken: req.body.token });
-				if (user) {
-					if (req.body.password) {
-						user.password = bcrypt.hashSync(req.body.password, 8);
-						await user.save();
-						res.send({
-							message: "Password reseted successfully",
-						});
-					}
-				} else {
-					res.status(404).send({ message: "User not found" });
-				}
-			}
-		});
-	})
-);
-
-/*Modify user by admin*/
-userRouter.put(
-	"/:id",
-	isAuth,
-	isAdmin,
-	expressAsyncHandler(async (req, res) => {
-		const user = await User.findById(req.params.id);
-		if (user) {
-			user.name = req.body.name || user.name;
-			user.email = req.body.email || user.email;
-			user.isAdmin = Boolean(req.body.isAdmin);
-			const updatedUser = await user.save();
-			res.send({ message: "User Updated", user: updatedUser });
-		} else {
-			res.status(404).send({ message: "User Not Found" });
-		}
-	})
-);
-
-/*Login user*/
-userRouter.post(
-	"/signin",
-	expressAsyncHandler(async (req, res) => {
-		const user = await User.findOne({ email: req.body.email });
-		
-		if (user && !bcrypt.compareSync(user.email, user.password)) {
-			if (bcrypt.compareSync(req.body.password, user.password)) {
-				res.send({
-					_id: user._id,
-					name: user.name,
-					email: user.email,
-					isAdmin: user.isAdmin,
-					token: generateToken(user),
-				});
-				return;
-			} else {
-				res.status(401).send({ message: "Invalid password" });
-			}
-		}
-		if (user &&	bcrypt.compareSync(user.email, user.password) && req.body.password === user.email) {
-			res.send({
-				_id: user._id,
-				name: user.name,
-				email: user.email,
-				isAdmin: user.isAdmin,
-				token: generateToken(user),
-			});
-			return;
-		} else {
-			if (user){
-				res.status(401).send({message:"You are already registered with Google. Please Login with Google"});
-			} else {
-				res.status(401).send({message:"You are not registered. Please create an account or Login with Google"});
-			}
-		}
-	})
-);
-
-/*Create user*/
-userRouter.post(
-	"/signup",
-	expressAsyncHandler(async (req, res) => {
-		const newUser = new User({
-			name: req.body.name,
-			email: req.body.email,
-			password: bcrypt.hashSync(req.body.password),
-		});
-		const user = await newUser.save();
-
-		const mailOptions = {
-			from: "gusgvillafane@gmail.com",
-			to: req.body.email,
-			subject: "Account Confirmation ECOMMERCEV2",
-			html: userCreateEmailTemplate(user),
-		};
-
-		transporter.sendMail(mailOptions, function (error, info) {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log("email sent succesfuly ");
-			}
-		});
-
-		res.send({
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			isAdmin: user.isAdmin,
-			token: generateToken(user),
-		});
-	})
-);
-
-userRouter.delete(
-	"/:id",
-	isAuth,
-	isAdmin,
-	expressAsyncHandler(async (req, res) => {
-		const user = await User.findById(req.params.id);
-		if (user) {
-			if (user.email === "admin@gmail.com") {
-				res.status(400).send({ message: "Can Not Delete Admin User" });
-				return;
-			}
-			await user.remove();
-			res.send({ message: "User Deleted" });
-		} else {
-			res.status(404).send({ message: "User Not Found" });
-		}
-	})
-);
+userRouter.delete("/:id", isAuth, isAdmin, deleteUser);
 
 export default userRouter;

@@ -9,7 +9,7 @@ import { transporter } from "../nodemailer/transporter.js";
 import { payOrderEmailTemplate } from "../nodemailer/payOrderEmailTemplate.js";
 import mercadopago from "mercadopago";
 import dotenv from "dotenv";
-import { receiveWebhook } from "../controllers/paymentControllers.js";
+import { receiveWebhook } from "../controllers/paymentsControllers/mercadoPagoPaymentControllers.js";
 
 dotenv.config();
 

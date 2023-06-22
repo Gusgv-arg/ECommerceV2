@@ -1,8 +1,8 @@
 import mercadopago from "mercadopago";
-import Order from "../models/orderModel.js";
+import Order from "../../models/orderModel.js";
 import nodemailer from "nodemailer";
-import { transporter } from "../nodemailer/transporter.js";
-import { payOrderEmailTemplate } from "../nodemailer/payOrderEmailTemplate.js";
+import { transporter } from "../../nodemailer/transporter.js";
+import { payOrderEmailTemplate } from "../../nodemailer/payOrderEmailTemplate.js";
 
 export const receiveWebhook = async (req, res) => {
 	try {
