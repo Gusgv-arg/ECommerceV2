@@ -39,6 +39,8 @@ import Footer from "./components/Footer";
 import About from "./screens/About";
 import { useAuth0 } from "@auth0/auth0-react";
 import MapScreen from "./screens/MapScreen";
+import SupportScreen from "./components/SupportScreen";
+import ChatBox from "./components/ChatBox";
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -203,6 +205,9 @@ function App() {
 											<LinkContainer to="/admin/users">
 												<NavDropdown.Item>Users</NavDropdown.Item>
 											</LinkContainer>
+											<LinkContainer to="/admin/support">
+												<NavDropdown.Item>Support</NavDropdown.Item>
+											</LinkContainer>
 										</NavDropdown>
 									)}
 								</Nav>
@@ -299,6 +304,15 @@ function App() {
 								}
 							></Route>
 							<Route
+								path="/admin/support"
+								element={
+									<AdminRoute>
+										<SupportScreen />
+									</AdminRoute>
+								}
+							></Route>
+
+							<Route
 								path="/admin/products"
 								element={
 									<AdminRoute>
@@ -343,8 +357,12 @@ function App() {
 					</Container>
 				</main>
 				<footer>
-					<div className="text-center">
-						<Footer />
+					<div>
+						<div className="row center"></div>
+						<div className="text-center">
+							{userInfo && !userInfo.isAdmin && <ChatBox userInfo={userInfo} />}
+							<Footer />
+						</div>
 					</div>
 				</footer>
 			</div>

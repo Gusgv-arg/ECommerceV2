@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/Gusgv-arg/ECommerceV2#readme",
   "dependencies": {
-    "@auth0/auth0-react": "^2.1.0"
+    "@auth0/auth0-react": "^2.1.0",
+    "socket.io": "^4.6.2",
+    "socket.io-client": "^4.6.2"
   }
 }
