@@ -13,21 +13,13 @@ import { deleteUser } from "../controllers/userControllers/deleteuser.js";
 const userRouter = express.Router();
 
 userRouter.get("/", isAuth, isAdmin, getUsers);
-
 userRouter.get("/:id", isAuth, isAdmin, getUser);
-
 userRouter.put("/profile", isAuth, modifyUser);
-
 userRouter.put("/:id", isAuth, isAdmin, modifyUserByAdmin);
-
 userRouter.post("/forget-password", forgetPassword);
-
 userRouter.post("/reset-password", resetPassword);
-
 userRouter.post("/signin", signinUser);
-
 userRouter.post("/signup", signupUser);
-
 userRouter.delete("/:id", isAuth, isAdmin, deleteUser);
 
 export default userRouter;
