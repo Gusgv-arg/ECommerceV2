@@ -8,7 +8,7 @@ import { forgetPassword } from "../controllers/userControllers/forgetPassword.js
 import { resetPassword } from "../controllers/userControllers/resetPassword.js";
 import { signinUser } from "../controllers/userControllers/signinUser.js";
 import { signupUser } from "../controllers/userControllers/signupUser.js";
-import { deleteUser } from "../controllers/userControllers/deleteuser.js";
+import { deleteUser } from "../controllers/userControllers/deleteUser.js";
 
 const userRouter = express.Router();
 
