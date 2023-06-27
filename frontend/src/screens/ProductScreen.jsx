@@ -15,7 +15,7 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import { toast } from "react-toastify";
 import MessageBox from "../components/MessageBox";
 import LoadingBox from "../components/LoadingBox";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -149,7 +149,9 @@ export default function ProductScreen() {
 								numReviews={product.numReviews}
 							></Rating>
 						</ListGroup.Item>
-						<ListGroup.Item><span className="text-bold">Price:</span> ${product.price}</ListGroup.Item>
+						<ListGroup.Item>
+							<span className="text-bold">Price:</span> ${product.price}
+						</ListGroup.Item>
 						<ListGroup.Item>
 							<Row xs={1} md={2} className="g-2">
 								{[product.image, ...product.images].map((x) => (
@@ -168,8 +170,8 @@ export default function ProductScreen() {
 								))}
 							</Row>
 						</ListGroup.Item>
-						<ListGroup.Item >
-							<span className="text-bold" >Description:</span>
+						<ListGroup.Item>
+							<span className="text-bold">Description:</span>
 							<p>{product.description}</p>
 						</ListGroup.Item>
 					</ListGroup>

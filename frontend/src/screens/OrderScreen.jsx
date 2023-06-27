@@ -10,12 +10,13 @@ import { Link } from "react-router-dom";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 import { Store } from "../Store";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Swal from "sweetalert2";
 import mercado_pago from "../images/logo-mercado-pago.webp";
+import { taloPayment } from "../utils/taloPayment";
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -205,7 +206,12 @@ export default function OrderScreen() {
 			}
 		});
 	};
-	console.log("order", order);
+
+	const handleCrypto = async () => {
+		const paymentUrl = await taloPayment(order.totalPrice, "USD")
+		window.open(paymentUrl, "_blank")
+	};
+
 	return loading ? (
 		<LoadingBox></LoadingBox>
 	) : error ? (
@@ -341,6 +347,14 @@ export default function OrderScreen() {
 													}}
 												>
 													<img src={mercado_pago} alt="image_mercado_pago" />
+												</Button>
+											</div>
+										)}
+
+										{cart.paymentMethod === "Crypto" && (
+											<div className="d-flex justify-content-around align-items-center">
+												<Button variant="success" onClick={handleCrypto}>
+													Pay with Crypto powered by Talo
 												</Button>
 											</div>
 										)}

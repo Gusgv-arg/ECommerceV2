@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 import axios from "axios";
 import LoadingBox from "../components/LoadingBox";
 
@@ -37,10 +37,10 @@ export default function ProfileScreen() {
 
 	const submitHandler = async (e) => {
 		e.preventDefault();
-    if (password !== confirmPassword){
-      toast.error("Passwords must be equal")
-      return
-    }
+		if (password !== confirmPassword) {
+			toast.error("Passwords must be equal");
+			return;
+		}
 		try {
 			const { data } = await axios.put(
 				"/api/users/profile",
@@ -97,7 +97,7 @@ export default function ProfileScreen() {
 						<Form.Label>Password</Form.Label>
 						<Form.Control
 							type="password"
-              value={password}
+							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 						/>
 					</Form.Group>
@@ -105,7 +105,7 @@ export default function ProfileScreen() {
 						<Form.Label>Confirm Password</Form.Label>
 						<Form.Control
 							type="password"
-              value={confirmPassword}
+							value={confirmPassword}
 							onChange={(e) => setConfirmPassword(e.target.value)}
 						/>
 					</Form.Group>

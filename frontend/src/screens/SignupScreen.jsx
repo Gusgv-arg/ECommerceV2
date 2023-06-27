@@ -7,7 +7,7 @@ import { Helmet } from "react-helmet-async";
 import { useContext, useEffect, useState } from "react";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 import MyModal from "../components/Modal";
 import UserLegalText from "../texts/UserLegalText";
 

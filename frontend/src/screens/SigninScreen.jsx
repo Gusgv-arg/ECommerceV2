@@ -7,7 +7,7 @@ import { Helmet } from "react-helmet-async";
 import { useContext, useEffect, useState } from "react";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function SigninScreen() {
@@ -43,18 +43,19 @@ export default function SigninScreen() {
 	useEffect(() => {
 		if (userInfo) {
 			navigate(redirect);
-		}				
+		}
 	}, [navigate, redirect, userInfo]);
 
 	return (
 		<Container className="small-container">
 			<Helmet>
 				<title>Sign In</title>
-			</Helmet>			
+			</Helmet>
 			<h3 className="my-4">Sign in</h3>
 			<div className="mb-3">
 				<Button type="submit" className="" onClick={() => loginWithRedirect()}>
-					Sign In or Create Account with <i className="fab fa-google mx-1 text-dark icons" />
+					Sign In or Create Account with{" "}
+					<i className="fab fa-google mx-1 text-dark icons" />
 					oogle
 				</Button>
 			</div>

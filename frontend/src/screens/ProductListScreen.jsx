@@ -8,7 +8,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 import Swal from "sweetalert2";
 import Table from "react-bootstrap/Table";
 

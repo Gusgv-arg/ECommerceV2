@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 import { Store } from "../Store";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import Table from "react-bootstrap/Table";
@@ -139,7 +139,7 @@ export default function OrderListScreen() {
 								<th>ACTIONS</th>
 							</tr>
 						</thead>
-						<tbody group-divider >
+						<tbody group-divider>
 							{orders.map((order) => (
 								<tr key={order._id}>
 									<td>{order._id}</td>

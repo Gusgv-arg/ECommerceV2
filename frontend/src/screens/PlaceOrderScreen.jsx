@@ -10,7 +10,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { Store } from "../Store";
 import CheckoutSteps from "../components/CheckoutSteps";
 import { toast } from "react-toastify";
-import { getError } from "../utils";
+import { getError } from "../utils/utils";
 import LoadingBox from "../components/LoadingBox";
 
 const reducer = (state, action) => {
