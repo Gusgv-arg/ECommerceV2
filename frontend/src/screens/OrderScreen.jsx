@@ -208,8 +208,22 @@ export default function OrderScreen() {
 	};
 
 	const handleCrypto = async () => {
-		const paymentUrl = await taloPayment(order.totalPrice, "USD")
-		window.open(paymentUrl, "_blank")
+		const paymentUrl = await taloPayment(order.totalPrice, "USD");
+		window.open(paymentUrl, "_blank");
+	};
+
+	const handleMercadoPago = async () => {
+		try {
+			const { data } = await axios.post("/api/orders/pay_mercadopago", order, {
+				headers: {
+					authorization: `Bearer ${userInfo.token}`,
+				},
+			});
+			const paymentUrl = data.result.body.init_point;
+			window.open(paymentUrl, "_blank");
+		} catch (error) {
+			toast.error(getError(error));
+		}
 	};
 
 	return loading ? (
@@ -335,16 +349,7 @@ export default function OrderScreen() {
 
 												<Button
 													className="btn-Mercado-Pago"
-													onClick={() => {
-														axios
-															.post("/api/orders/pay_mercadopago", order)
-															.then(
-																(res) =>
-																	(window.location.href =
-																		res.data.result.body.init_point)
-															)
-															.then(console.log(window.location.href));
-													}}
+													onClick={handleMercadoPago}
 												>
 													<img src={mercado_pago} alt="image_mercado_pago" />
 												</Button>

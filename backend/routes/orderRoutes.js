@@ -18,10 +18,7 @@ orderRouter.post("/", isAuth, createOrder);
 orderRouter.get("/summary", isAuth, isAdmin, dataForPanelAdmin);
 orderRouter.get("/mine", isAuth, getOrders);
 orderRouter.get("/:id", isAuth, getOrderById);
-orderRouter.post("/pay_mercadopago",
-	 //isAuth,
-	payWithMercadoPago
-);
+orderRouter.post("/pay_mercadopago", isAuth, payWithMercadoPago);
 orderRouter.post("/webhook", receiveWebhook);
 orderRouter.put("/:id/pay", isAuth, payOrder);
 orderRouter.put("/:id/deliver", isAuth, deliverOrder);

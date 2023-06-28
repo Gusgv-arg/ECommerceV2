@@ -27,7 +27,7 @@ export default function About() {
 					</p>
 					<p>
 						I will continue adding functionalities such as Google
-						login, Mercado Pago, Cripto Payments, and more 💪
+						login, Mercado Pago, Crypto Payments, and more 💪
 					</p>
 					<p>
 						I would like to hear from you and receive your feedaback
