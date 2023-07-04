@@ -156,7 +156,7 @@ function App() {
 
 							<Navbar.Collapse
 								id="basic-navbar-nav"
-								className="d-flex justify-content-evenly"
+								className="justify-content-evenly"
 							>
 								<SearchBox></SearchBox>
 

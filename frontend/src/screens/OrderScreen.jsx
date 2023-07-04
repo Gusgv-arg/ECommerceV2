@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Swal from "sweetalert2";
 import mercado_pago from "../images/logo-mercado-pago.webp";
-import { taloPayment } from "../utils/taloPayment";
+import { tokenTalo } from "../utils/tokenTalo";
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -208,8 +208,27 @@ export default function OrderScreen() {
 	};
 
 	const handleCrypto = async () => {
-		const paymentUrl = await taloPayment(order.totalPrice, "USD");
-		window.open(paymentUrl, "_blank");
+		try {
+			const response = await axios.post("/api/orders/pay_crypto", order, {
+				headers: {
+					authorization: `Bearer ${userInfo.token}`,
+				},
+			});
+			const paymentUrl = response.data.data.payment_url;
+			console.log("recibido de talo", response);
+			tokenTalo()
+			/* const access_token="9f51b1b2-b0cb-446d-88f7-84a78ae0e715"
+			const payment = await axios.get(
+				`https://sandbox-api.talo.com.ar/payments/${response.data.data.user_id}`,
+				{headers: {
+					'Authorization': `Bearer ${access_token}`
+					}}
+			);
+			console.log("resultado despues del pago", payment); */
+			window.open(paymentUrl, "_blank");
+		} catch (error) {
+			toast.error(getError(error));
+		}
 	};
 
 	const handleMercadoPago = async () => {

@@ -10,6 +10,8 @@ import { payWithMercadoPago } from "../controllers/paymentsControllers/payWithMe
 import { payOrder } from "../controllers/orderControllers/payOrder.js";
 import { deliverOrder } from "../controllers/orderControllers/deliverOrder.js";
 import { deleteOrder } from "../controllers/orderControllers/deleteOrder.js";
+import { payWithCrypto } from "../controllers/paymentsControllers/payWithCrypto.js";
+import { receiveWebhookTalo } from "../controllers/paymentsControllers/webhookCrypto.js";
 
 const orderRouter = express.Router();
 
@@ -20,6 +22,8 @@ orderRouter.get("/mine", isAuth, getOrders);
 orderRouter.get("/:id", isAuth, getOrderById);
 orderRouter.post("/pay_mercadopago", isAuth, payWithMercadoPago);
 orderRouter.post("/webhook", receiveWebhook);
+orderRouter.post("/pay_crypto", isAuth, payWithCrypto);
+orderRouter.post("/webhookTalo", receiveWebhookTalo);
 orderRouter.put("/:id/pay", isAuth, payOrder);
 orderRouter.put("/:id/deliver", isAuth, deliverOrder);
 orderRouter.delete("/:id", isAuth, isAdmin, deleteOrder);
