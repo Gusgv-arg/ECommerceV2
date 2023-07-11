@@ -10,6 +10,7 @@ import orderRouter from "./routes/orderRoutes.js";
 import uploadRouter from "./routes/uploadRoutes.js";
 import path from "path";
 import morgan from "morgan";
+import { taloToken } from './controllers/paymentsControllers/taloToken.js';
 
 dotenv.config();
 
@@ -35,9 +36,11 @@ app.use("/api/orders", orderRouter);
 app.get("/api/keys/paypal", (req, res) => {
 	res.send(process.env.PAYPAL_CLIENT_ID || "sb");
 });
+app.get("/api/keys/talo", taloToken)
 app.get("/api/keys/google", (req, res) => {
 	res.send({ key: process.env.GOOGLE_API_KEY || "" });
 });
+
 
 //For deploy
 const __dirname = path.resolve();

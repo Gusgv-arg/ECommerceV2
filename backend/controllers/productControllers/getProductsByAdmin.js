@@ -1,6 +1,14 @@
 import expressAsyncHandler from "express-async-handler";
 import Product from "../../models/productModel.js";
 
+export const getProductsByAdmin = expressAsyncHandler(async (req, res) => {
+	const products = await Product.find();
+	res.send(products);
+});
+//Old version with backend pagination
+/*import expressAsyncHandler from "express-async-handler";
+import Product from "../../models/productModel.js";
+
 const PAGE_SIZE = 8;
 
 export const getProductsByAdmin = expressAsyncHandler(async (req, res) => {
@@ -18,4 +26,4 @@ export const getProductsByAdmin = expressAsyncHandler(async (req, res) => {
         page,
         pages: Math.ceil(countProducts / pageSize),
     });
-})
+}) */

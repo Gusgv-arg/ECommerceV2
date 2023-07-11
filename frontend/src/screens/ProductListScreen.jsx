@@ -3,7 +3,7 @@ import axios from "axios";
 import { Store } from "../Store";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { getError } from "../utils/utils";
 import Swal from "sweetalert2";
 import Table from "react-bootstrap/Table";
+import Pagination from "react-bootstrap/Pagination";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -19,9 +20,7 @@ const reducer = (state, action) => {
 		case "FETCH_SUCCESS":
 			return {
 				...state,
-				products: action.payload.products,
-				page: action.payload.page,
-				pages: action.payload.pages,
+				products: action.payload,
 				loading: false,
 			};
 		case "FETCH_FAIL":
@@ -48,7 +47,9 @@ const reducer = (state, action) => {
 
 		case "DELETE_RESET":
 			return { ...state, loadingDelete: false, successDelete: false };
-		default:
+			case "SET_CURRENT_PAGE":
+				return { ...state, currentPage: action.payload };
+			default:
 			return state;
 	}
 };
@@ -59,22 +60,23 @@ export default function ProductListScreen() {
 			loading,
 			error,
 			products,
-			pages,
 			loadingCreate,
 			loadingDelete,
 			successDelete,
+			currentPage,
+			itemsPerPage,
 		},
 		dispatch,
 	] = useReducer(reducer, {
 		loading: true,
 		error: "",
+		products: [],
+		currentPage: 1,
+		itemsPerPage: 10,
+
 	});
 
 	const navigate = useNavigate();
-
-	const { search } = useLocation();
-	const sp = new URLSearchParams(search);
-	const page = sp.get("page") || 1;
 
 	const { state } = useContext(Store);
 	const { userInfo } = state;
@@ -82,7 +84,7 @@ export default function ProductListScreen() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const { data } = await axios.get(`/api/products/admin?page=${page} `, {
+				const { data } = await axios.get("/api/products/admin", {
 					headers: { Authorization: `Bearer ${userInfo.token}` },
 				});
 
@@ -94,7 +96,7 @@ export default function ProductListScreen() {
 		} else {
 			fetchData();
 		}
-	}, [page, userInfo, successDelete]);
+	}, [userInfo, successDelete]);
 
 	const createHandler = async () => {
 		try {
@@ -149,6 +151,16 @@ export default function ProductListScreen() {
 		});
 	};
 
+	const indexOfLastItem = currentPage * itemsPerPage;
+	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
+
+	const handlePageChange = (pageNumber) => {
+		const totalPages = Math.ceil(products.length / itemsPerPage);
+		const validPageNumber = Math.max(1, Math.min(pageNumber, totalPages));
+		dispatch({ type: "SET_CURRENT_PAGE", payload: validPageNumber });
+	};
+
 	return (
 		<div>
 			<Row>
@@ -184,7 +196,7 @@ export default function ProductListScreen() {
 							</tr>
 						</thead>
 						<tbody>
-							{products.map((product) => (
+							{currentItems.map((product) => (
 								<tr key={product._id}>
 									<td>{product._id}</td>
 									<td>{product.name}</td>
@@ -212,17 +224,26 @@ export default function ProductListScreen() {
 							))}
 						</tbody>
 					</Table>
-					<div>
-						{[...Array(pages).keys()].map((x) => (
-							<Link
-								className={x + 1 === Number(page) ? "btn text-bold" : "btn"}
-								key={x + 1}
-								to={`/admin/products?page=${x + 1}`}
-							>
-								{x + 1}
-							</Link>
-						))}
-					</div>
+					<Pagination className="justify-content-center">
+						<Pagination.First
+							onClick={() => handlePageChange(1)}
+							disabled={currentPage === 1}
+						/>
+						<Pagination.Prev
+							onClick={() => handlePageChange(currentPage - 1)}
+							disabled={currentPage === 1}
+						/>
+						<Pagination.Item active>{currentPage}</Pagination.Item>
+						<Pagination.Next
+							onClick={() => handlePageChange(currentPage + 1)}
+							disabled={indexOfLastItem >= products.length}
+						/>
+						<Pagination.Last
+							onClick={() =>
+								handlePageChange(Math.ceil(products.length / itemsPerPage))
+							}
+						/>
+					</Pagination>
 				</>
 			)}
 		</div>

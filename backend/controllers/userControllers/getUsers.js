@@ -1,6 +1,16 @@
 import expressAsyncHandler from "express-async-handler";
 import User from "../../models/userModel.js"; 
 
+
+export const getUsers = expressAsyncHandler(async (req, res) => {
+    const users = await User.find({})
+    res.send(users);
+})
+
+//Old controller with pagination from backend
+/* import expressAsyncHandler from "express-async-handler";
+import User from "../../models/userModel.js"; 
+
 const PAGE_SIZE = 6;
 
 export const getUsers = expressAsyncHandler(async (req, res) => {
@@ -20,4 +30,4 @@ export const getUsers = expressAsyncHandler(async (req, res) => {
         page,
         pages: Math.ceil(countUsers / pageSize),
     });
-})
+}) */

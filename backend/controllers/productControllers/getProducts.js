@@ -1,5 +1,13 @@
 import Product from "../../models/productModel.js";
 
+export const getProducts = async (req, res) => {
+	const products = await Product.find();
+	res.send(products);
+};
+
+//Old controller with backend pagination
+/* import Product from "../../models/productModel.js";
+
 const PAGE_SIZE = 8;
 
 export const getProducts = async (req, res) => {
@@ -19,4 +27,4 @@ export const getProducts = async (req, res) => {
 		page,
 		pages: Math.ceil(countProducts / pageSize),
 	});
-}
+} */

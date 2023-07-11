@@ -41,6 +41,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import MapScreen from "./screens/MapScreen";
 import SupportScreen from "./components/SupportScreen";
 import ChatBox from "./components/ChatBox";
+import OrderListScreenNew from "./screens/OrderListScreenNew";
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -332,7 +333,8 @@ function App() {
 								path="/admin/orders"
 								element={
 									<AdminRoute>
-										<OrderListScreen />
+										{/* <OrderListScreen /> */}
+										<OrderListScreenNew />
 									</AdminRoute>
 								}
 							></Route>

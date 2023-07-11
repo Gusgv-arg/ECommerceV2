@@ -18,6 +18,14 @@ const initialState = {
 			? localStorage.getItem("paymentMethod")
 			: "",
 	},
+	/* crypto: {
+		idCryptoPayment: localStorage.getItem("idCryptoPayment")
+			? JSON.parse(localStorage.getItem("idCryptoPayment"))
+			: null,
+		tokenCryptoPayment: localStorage.getItem("tokenCryptoPayment")
+			? JSON.parse(localStorage.getItem("tokenCryptoPayment"))
+			: null,
+	}, */
 };
 
 function reducer(state, action) {

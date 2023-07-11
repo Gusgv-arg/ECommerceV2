@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import Row from "react-bootstrap/Row";
@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Swal from "sweetalert2";
 import mercado_pago from "../images/logo-mercado-pago.webp";
-import { tokenTalo } from "../utils/tokenTalo";
+import { statusTalo } from "../utils/statusTalo";
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -32,6 +32,26 @@ function reducer(state, action) {
 			return { ...state, loadingPay: false, successPay: true };
 		case "PAY_FAIL":
 			return { ...state, loadingPay: false };
+
+		//crypto cases
+		case "FETCH_REQUEST_CRYPTO":
+			return { ...state, loadingPayCrypto: true, error: "" };
+		case "FETCH_SUCCESS_CRYPTO":
+			return {
+				...state,
+				loadingPayCrypto: false,
+				order: action.payload,
+				error: "",
+			};
+		case "FETCH_FAIL_CRYPTO":
+			return { ...state, loadingPayCrypto: false, error: action.payload };
+		case "PAY_REQUEST_CRYPTO":
+			return { ...state, loadingPayCrypto: true };
+		case "PAY_SUCCESS_CRYPTO":
+			return { ...state, loadingPayCrypto: false, successPayCrypto: true };
+		case "PAY_FAIL_CRYPTO":
+			return { ...state, loadingPayCrypto: false };
+
 		case "PAY_RESET":
 			return { ...state, loadingPay: false, successPay: false };
 		case "DELIVER_REQUEST":
@@ -59,13 +79,17 @@ export default function OrderScreen() {
 	const { id: orderId } = params;
 	const navigate = useNavigate();
 
+	const [taloToken, setTaloToken] = useState("");
+
 	const [
 		{
 			loading,
 			error,
 			order,
 			successPay,
+			successPayCrypto,
 			loadingPay,
+			loadingPayCrypto,
 			loadingDeliver,
 			successDeliver,
 		},
@@ -76,6 +100,8 @@ export default function OrderScreen() {
 		error: "",
 		successPay: false,
 		loadingPay: false,
+		loadingPayCrypto: false,
+		successPayCrypto: false,
 	});
 
 	const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
@@ -113,6 +139,7 @@ export default function OrderScreen() {
 			}
 		});
 	}
+
 	function onError(err) {
 		toast.error(getError(err));
 	}
@@ -147,20 +174,68 @@ export default function OrderScreen() {
 				dispatch({ type: "DELIVER_RESET" });
 			}
 		} else {
-			const loadPaypalScript = async () => {
-				const { data: clientId } = await axios.get("/api/keys/paypal", {
-					headers: { authorization: `Bearer ${userInfo.token}` },
-				});
-				paypalDispatch({
-					type: "resetOptions",
-					value: {
-						"client-id": clientId,
-						currency: "USD",
-					},
-				});
-				paypalDispatch({ type: "setLoadingStatus", value: "pending" });
-			};
-			loadPaypalScript();
+			if (order.paymentMethod === "Paypal") {
+				const loadPaypalScript = async () => {
+					const { data: clientId } = await axios.get("/api/keys/paypal", {
+						headers: { authorization: `Bearer ${userInfo.token}` },
+					});
+					paypalDispatch({
+						type: "resetOptions",
+						value: {
+							"client-id": clientId,
+							currency: "USD",
+						},
+					});
+					paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+				};
+				loadPaypalScript();
+			}
+			if (order.paymentMethod === "Crypto") {
+				const fetchTaloToken = async () => {
+					const data = await axios.get("/api/keys/talo");
+					const taloToken = await data.data.token;
+					setTaloToken(taloToken);
+				};
+				fetchTaloToken();
+			}
+			if (
+				order.paymentMethod === "Crypto" &&
+				order.hasOwnProperty("paymentResult") &&
+				successPayCrypto === false
+			) {
+				const paymentId = order.paymentResult.id;
+				const statusCryptoPayment = async () => {
+					const status = await statusTalo(taloToken, paymentId);
+					if (status === "SUCCESS") {
+						try {
+							dispatch({ type: "PAY_REQUEST_CRYPTO" });
+							const { data } = await axios.put(
+								`/api/orders/${order._id}/pay`,
+								order,
+								{
+									headers: { authorization: `Bearer ${userInfo.token}` },
+								}
+							);
+							dispatch({ type: "PAY_SUCCESS_CRYPTO", payload: data });
+							toast.success("Your Order was paid successfully");
+							navigate("/");
+						} catch (err) {
+							dispatch({ type: "PAY_FAIL_CRYPTO", payload: getError(err) });
+							toast.error(getError(err));
+						}
+					}
+					if (status === "UNDERPAYED") {
+						dispatch({ type: "PAY_SUCCESS_CRYPTO" });
+						toast.error(`Your payment was ${status}. Please contact us.`);
+					}
+					if (status === "OVERPAID") {
+						dispatch({ type: "PAY_SUCCESS_CRYPTO" });
+						toast.info(`Your payment was ${status}. Please contact us.`);
+					}
+				};
+				statusCryptoPayment();
+				
+			}
 		}
 	}, [
 		order,
@@ -170,6 +245,8 @@ export default function OrderScreen() {
 		successPay,
 		paypalDispatch,
 		successDeliver,
+		taloToken,
+		successPayCrypto,
 	]);
 
 	async function deliverOrderConfirmHandler() {
@@ -207,6 +284,10 @@ export default function OrderScreen() {
 		});
 	};
 
+	const redirectToExternalUrl = (paymentUrl) => {
+		window.location.href = `${paymentUrl}`;
+	};
+
 	const handleCrypto = async () => {
 		try {
 			const response = await axios.post("/api/orders/pay_crypto", order, {
@@ -214,18 +295,8 @@ export default function OrderScreen() {
 					authorization: `Bearer ${userInfo.token}`,
 				},
 			});
-			const paymentUrl = response.data.data.payment_url;
-			console.log("recibido de talo", response);
-			tokenTalo()
-			/* const access_token="9f51b1b2-b0cb-446d-88f7-84a78ae0e715"
-			const payment = await axios.get(
-				`https://sandbox-api.talo.com.ar/payments/${response.data.data.user_id}`,
-				{headers: {
-					'Authorization': `Bearer ${access_token}`
-					}}
-			);
-			console.log("resultado despues del pago", payment); */
-			window.open(paymentUrl, "_blank");
+			const paymentUrl = response.data.paymentResult.url_crypto_payment;
+			redirectToExternalUrl(paymentUrl);
 		} catch (error) {
 			toast.error(getError(error));
 		}

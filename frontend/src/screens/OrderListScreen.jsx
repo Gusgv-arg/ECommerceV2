@@ -41,6 +41,7 @@ const reducer = (state, action) => {
 			return state;
 	}
 };
+
 export default function OrderListScreen() {
 	const navigate = useNavigate();
 
@@ -186,6 +187,8 @@ export default function OrderListScreen() {
 								{x + 1}
 							</Link>
 						))}
+
+						
 					</div>
 				</>
 			)}

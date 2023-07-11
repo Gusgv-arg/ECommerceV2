@@ -1,6 +1,15 @@
 import expressAsyncHandler from "express-async-handler";
 import Order from "../../models/orderModel.js";
 
+export const getOrdersByAdmin = expressAsyncHandler(async (req, res) => {
+	const orders = await Order.find().populate("user", "name");
+	res.send(orders);
+}); 
+
+//Old version with pagination in backend
+/* import expressAsyncHandler from "express-async-handler";
+import Order from "../../models/orderModel.js";
+
 const PAGE_SIZE = 6;
 
 export const getOrdersByAdmin = expressAsyncHandler(async (req, res) => {
@@ -21,4 +30,4 @@ export const getOrdersByAdmin = expressAsyncHandler(async (req, res) => {
         page,
         pages: Math.ceil(countOrders / pageSize),
     });
-})
+}) */

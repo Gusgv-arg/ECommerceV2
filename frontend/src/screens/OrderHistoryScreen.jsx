@@ -8,6 +8,7 @@ import { Store } from "../Store";
 import { getError } from "../utils/utils";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
+import Pagination from "react-bootstrap/Pagination";
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -17,6 +18,8 @@ const reducer = (state, action) => {
 			return { ...state, orders: action.payload, loading: false };
 		case "FETCH_FAIL":
 			return { ...state, loading: false, error: action.payload };
+		case "SET_CURRENT_PAGE":
+			return { ...state, currentPage: action.payload };
 		default:
 			return state;
 	}
@@ -27,10 +30,15 @@ export default function OrderHistoryScreen() {
 	const { userInfo } = state;
 	const navigate = useNavigate();
 
-	const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
-		loading: true,
-		error: "",
-	});
+	const [{ loading, error, orders, currentPage, itemsPerPage }, dispatch] =
+		useReducer(reducer, {
+			loading: true,
+			error: "",
+			orders: [],
+			currentPage: 1,
+			itemsPerPage: 10,
+		});
+
 	useEffect(() => {
 		const fetchData = async () => {
 			dispatch({ type: "FETCH_REQUEST" });
@@ -50,6 +58,17 @@ export default function OrderHistoryScreen() {
 		};
 		fetchData();
 	}, [userInfo]);
+
+	const indexOfLastItem = currentPage * itemsPerPage;
+	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	const currentItems = orders.slice(indexOfFirstItem, indexOfLastItem);
+
+	const handlePageChange = (pageNumber) => {
+		const totalPages = Math.ceil(orders.length / itemsPerPage);
+		const validPageNumber = Math.max(1, Math.min(pageNumber, totalPages));
+		dispatch({ type: "SET_CURRENT_PAGE", payload: validPageNumber });
+	};
+
 	return (
 		<div>
 			<Helmet>
@@ -62,44 +81,67 @@ export default function OrderHistoryScreen() {
 			) : error ? (
 				<MessageBox variant="danger">{error}</MessageBox>
 			) : (
-				<Table striped hover responsive className="table">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>DATE</th>
-							<th>TOTAL</th>
-							<th>PAID</th>
-							<th>DELIVERED</th>
-							<th>ACTIONS</th>
-						</tr>
-					</thead>
-					<tbody>
-						{orders.map((order) => (
-							<tr key={order._id}>
-								<td>{order._id}</td>
-								<td>{order.createdAt.substring(0, 10)}</td>
-								<td>{order.totalPrice.toFixed(2)}</td>
-								<td>{order.isPaid ? order.paidAt.substring(0, 10) : "No"}</td>
-								<td>
-									{order.isDelivered
-										? order.deliveredAt.substring(0, 10)
-										: "No"}
-								</td>
-								<td>
-									<Button
-										type="button"
-										variant="light"
-										onClick={() => {
-											navigate(`/order/${order._id}`);
-										}}
-									>
-										Details
-									</Button>
-								</td>
+				<>
+					<Table striped hover responsive className="table">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>DATE</th>
+								<th>TOTAL</th>
+								<th>PAID</th>
+								<th>DELIVERED</th>
+								<th>ACTIONS</th>
 							</tr>
-						))}
-					</tbody>
-				</Table>
+						</thead>
+						<tbody>
+							{currentItems.map((order) => (
+								<tr key={order._id}>
+									<td>{order._id}</td>
+									<td>{order.createdAt.substring(0, 10)}</td>
+									<td>{order.totalPrice.toFixed(2)}</td>
+									<td>{order.isPaid ? order.paidAt.substring(0, 10) : "No"}</td>
+									<td>
+										{order.isDelivered
+											? order.deliveredAt.substring(0, 10)
+											: "No"}
+									</td>
+									<td>
+										<Button
+											type="button"
+											variant="light"
+											onClick={() => {
+												navigate(`/order/${order._id}`);
+											}}
+										>
+											Details
+										</Button>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</Table>
+
+					<Pagination className="justify-content-center">
+						<Pagination.First
+							onClick={() => handlePageChange(1)}
+							disabled={currentPage === 1}
+						/>
+						<Pagination.Prev
+							onClick={() => handlePageChange(currentPage - 1)}
+							disabled={currentPage === 1}
+						/>
+						<Pagination.Item active>{currentPage}</Pagination.Item>
+						<Pagination.Next
+							onClick={() => handlePageChange(currentPage + 1)}
+							disabled={indexOfLastItem >= orders.length}
+						/>
+						<Pagination.Last
+							onClick={() =>
+								handlePageChange(Math.ceil(orders.length / itemsPerPage))
+							}
+						/>
+					</Pagination>
+				</>
 			)}
 		</div>
 	);
